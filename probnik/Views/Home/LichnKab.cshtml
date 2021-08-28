@@ -1,0 +1,192 @@
+@using probnik.Data
+@using System.Security.Claims;
+@model probnik.Data.Comments
+@{
+    ViewData["Title"] = "Личный Кабинет";
+    var post = ViewBag.Posts as List<Posts>;
+    var comment = ViewBag.Comments as List<Comments>;
+    var user = ViewBag.User as List<User>;
+    var only = User.Identity.Name;
+    var idd = User.FindFirstValue(ClaimTypes.NameIdentifier);
+    var albums = ViewBag.Albums as List<Albums>;
+    var photos = ViewBag.Photos as List<Photos>;
+}
+<style>
+    .verticalLine {
+        border: 1px solid #ebf3f5;
+    }
+    .photo {
+        width: 100px;
+        height: 100px;
+    }
+    img {
+        width: 90px;
+        height: 90px;
+    }
+    @@media (max-width:600px) {
+        img {
+            width: 60px;
+            height: 60px;
+        }
+        .photo {
+            width: 60px;
+            height: 60px;
+        }
+    }
+</style>
+
+    <a asp-action="EditUser" asp-route-id="@idd">Редактировать</a>
+<center>
+    
+    @foreach (var i in user.Where(x => x.Email == User.Identity.Name))
+    {
+        <h2>@i.Name</h2>
+        @if (i.Photo != null)
+        {
+            <img class="photo" src="data:image/jpeg;base64,@(Convert.ToBase64String(i.Photo))" />
+        }
+        else
+        {
+            <img style='width:120px; height:100px;' src="https://cdn.pixabay.com/photo/2012/04/26/19/43/profile-42914_1280.png" />
+        }
+        <br />
+
+
+        <p>Возраст: @(2021-i.Year.Year)</p>
+        <p>Номер Телефона: @i.PhoneNumber</p>
+        <p>Почта: @i.Email</p>
+        <a asp-action="Index" asp-controller="albums" asp-route-id="@idd">Фотографии</a>
+    }
+    <br />
+    @foreach (var i in albums.Where(x => x.UserId == idd))
+    {
+        foreach (var j in photos.Where(x => x.albumId == i.Id))
+        {
+            <img src="data:image/jpeg;base64,@(Convert.ToBase64String(j.Photo))" />
+        }
+        break;
+    }
+    <br />
+    <a asp-action="CreatePosts" asp-route-id="@idd">Добавить Новость</a>
+    <br />
+    <br />
+    @if (post != null)
+    {
+        foreach (var i in post)
+        {
+
+            if (i.To == idd)
+            {
+                <div style="border: 3px solid #ebf3f5">
+                    @foreach (var j in comment)
+                    {
+
+                        if (comment != null && j.postId == i.Id)
+                        {
+                            <p align="left">@j.Name</p>
+                            break;
+                        }
+                    }
+                    <p>@i.Body</p>
+                    @if (i.Photo != null)
+                    {
+                        <img style='width:80px; height:60px;' src="data:image/jpeg;base64,@(Convert.ToBase64String(i.Photo))" />
+                    }
+                    @if (i.Video != null)
+                    {
+                        <video controls width="300px" height="250px" src="data:video/mp4;base64,@(Convert.ToBase64String(i.Video))"></video>
+                    }
+                    @if (i.Music != null)
+                    {
+                        <audio controls width="300px" height="250px" src="data:audio/mp3;base64,@(Convert.ToBase64String(i.Music))"></audio>
+                    }
+                    @if (User.IsInRole("admin") || User.IsInRole("editor") || i.UserId == idd)
+                    {
+                        <form asp-controller="Home" asp-action="DeletePosts" method="post" asp-route-id="@i.Id">
+                            <p align="center">
+                                <input type="submit" class="btn btn-default" value="Удалить" />
+                            </p>
+                        </form>
+                    }
+                    <div class="verticalLine"></div>
+                    @foreach (var j in comment)
+                    {
+
+                        if (comment != null && j.postId == i.Id)
+                        {
+                            <div>
+                                <p align="left">@j.Name</p>
+                                <p>@j.Body</p>
+                            </div>
+                            <form asp-controller="Home" asp-action="DeleteComments" method="post" asp-route-id="@i.Id">
+                                <p align="center">
+                                    <input type="submit" class="btn btn-default" value="Удалить" />
+                                </p>
+                            </form>
+                            <div class="verticalLine"></div>
+                        }
+                    }
+                    <div class="verticalLine"></div>
+                    <form asp-action="LichnKab" asp-controller="home" enctype="multipart/form-data">
+                        <div hidden class="form-group">
+                            <label asp-for="postId" class="control-label">Имя</label>
+                            <input type="text" asp-for="postId" value="@i.Id" class="form-control" />
+                        </div>
+                        <div align="left" class="form-group">
+                            <label asp-for="Body" class="control-label">Комментарий</label>
+                            <input type="text" asp-for="Body" class="form-control" />
+                        </div>
+                        <div hidden class="form-group">
+                            <label asp-for="Data" class="control-label">Имя</label>
+                            <input type="text" asp-for="Data" value="@DateTime.Now" class="form-control" />
+                        </div>
+                        <div class="form-group">
+
+                            <label class="upload-file__label" for="upload-file__input_1" asp-for="Photo">
+                                <i class="fas fa-chevron-circle-up"></i>
+                            </label>
+                            <input hidden
+                                   asp-for="Photo"
+                                   type="file"
+                                   id="upload-file__input_1"
+                                   class="form-control"
+                                   accept=".jpg, .jpeg, .png, .gif, .bmp, .doc, .docx, .xls, .xlsx, .txt, .tar, .zip, .7z, .7zip"
+                                   multiple>
+                            <label class="upload-file__label" for="upload-file__input_2" asp-for="Video">
+                                <i class="fas fa-video"></i>
+                            </label>
+                            <input hidden
+                                   asp-for="Video"
+                                   type="file"
+                                   id="upload-file__input_2"
+                                   class="form-control"
+                                   accept=".mp4"
+                                   multiple>
+                            <label class="upload-file__label" for="upload-file__input_3" asp-for="Music">
+                                <i class="fas fa-music"></i>
+                            </label>
+                            <input hidden
+                                   asp-for="Music"
+                                   type="file"
+                                   id="upload-file__input_3"
+                                   class="form-control"
+                                   accept=".mp3"
+                                   multiple>
+                        </div>
+                        @foreach (var j in user.Where(x => x.Email == User.Identity.Name))
+                        {
+                            <div hidden align="left" class="form-group">
+                                <label asp-for="Name" class="control-label">Автор поста</label>
+                                <input type="text" asp-for="Name" value="@j.Name" class="form-control" />
+                            </div>
+                        }
+                        <div class="form-group">
+                            <input type="submit" value="Отправить" class="btn btn-default" />
+                        </div>
+                    </form>
+                </div>
+                <br />
+            }
+        }
+    }
+</center>

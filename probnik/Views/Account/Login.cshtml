@@ -1,0 +1,57 @@
+@model probnik.ViewModels.LoginViewModel
+<style>
+    input:focus {
+        border-color: none;
+        outline: none;
+    }
+</style>
+<h2>Вход</h2>
+<center>
+    <form method="post" asp-controller="Account" asp-action="Login"
+          asp-route-returnUrl="@Model.ReturnUrl">
+        <div asp-validation-summary="ModelOnly"></div>
+        <div>
+            <span>
+                <div style="display: inline-block; padding: 10px;">
+                    <label asp-for="Email"></label><br />
+                </div>
+            </span>
+            <span>
+                <div style="display: inline-block;">
+                    <input asp-for="Email" />
+                </div>
+            </span>
+            <span asp-validation-for="Email"></span>
+        </div>
+        <div>
+            <span>
+                <div style="display: inline-block;padding:4px">
+                    <label asp-for="Password"></label><br />
+                </div>
+            </span>
+            <span>
+                <div style="display: inline-block;">
+                    <input asp-for="Password" />
+                </div>
+            </span>
+            <span asp-validation-for="Password"></span>
+        </div>
+        <div>
+            <span>
+                <div style="display: inline-block;">
+                    <label asp-for="RememberMe"></label><br />
+                </div>
+            </span>
+            <span>
+                <div style="display: inline-block;">
+                    <input asp-for="RememberMe" />
+                </div>
+            </span>
+        </div>
+                        <div>
+                            <input type="submit" value="Войти" />
+                        </div>
+                        <a style="" asp-controller="Account" asp-action="Register">Регистрация</a>
+</form>
+</center>
+

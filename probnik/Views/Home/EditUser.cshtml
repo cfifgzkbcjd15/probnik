@@ -1,0 +1,33 @@
+@model probnik.ViewModels.EditUserViewModel
+@{
+    ViewBag.Title = "Редактирование пользователя";
+}
+<form asp-action="EditUser" asp-controller="Home" enctype="multipart/form-data">
+    <div asp-validation-summary="All" class="text-danger"></div>
+    <div class="form-group">
+        <input type="hidden" asp-for="Id" />
+    </div>
+    <div class="form-group">
+        <label asp-for="Name" class="control-label">Имя</label>
+        <input type="text" asp-for="Name" class="form-control" />
+    </div>
+    <div class="form-group">
+        <label asp-for="Email" class="control-label">Email</label>
+        <input type="text" asp-for="Email" class="form-control" />
+    </div>
+    <div class="form-group">
+        <label asp-for="PhoneNumber" class="control-label">Номер телефона</label>
+        <input type="text" asp-for="PhoneNumber" class="form-control" />
+    </div>
+    <div class="form-group">
+        <label asp-for="Photo" class="control-label">Фото</label>
+        <input type="file" asp-for="Photo" class="form-control" />
+    </div>
+    <div class="form-group">
+        <label asp-for="Year" class="control-label">Год рождения</label>
+        <input type="date" asp-for="Year" class="form-control" />
+    </div>
+    <div class="form-group">
+        <input type="submit" value="Сохранить" class="btn btn-outline-secondary" />
+    </div>
+</form>

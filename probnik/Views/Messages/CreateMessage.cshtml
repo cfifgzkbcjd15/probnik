@@ -1,0 +1,114 @@
+@using probnik.Data
+@using System.Security.Claims;
+@model probnik.Data.Messages;
+@{
+    ViewBag.Title = "Сообщение";
+    var message = ViewBag.Message as List<Messages>;
+    var users = ViewBag.Users as List<User>;
+    var idd = User.FindFirstValue(ClaimTypes.NameIdentifier);
+    var only = User.Identity.Name;
+    var mId = ViewBag.Mid;
+    var email = ViewBag.Emaill;
+    var name = ViewBag.Name;
+    var photo = ViewBag.Photo;
+            //Правильные сообщения
+            //@foreach (var i in message.Where(x => (x.id == mId && x.Fromm == only) || (x.Fromm == email && x.id == idd)).OrderBy(x => x.Date))
+}
+<style>
+    body{
+        overflow:hidden;
+    }
+</style>
+<div>
+    @foreach(var i in users) {
+    @if (i.Photo != null)
+    {
+        <p align="center"><img style='width: 60px; height: 60px; border-radius: 35px;' src="data:image/jpeg;base64,@(Convert.ToBase64String(i.Photo))" /> @name</p>
+    }
+    else
+    {
+        <p align="center"><img style='width:80px; height:60px;' src="https://cdn.pixabay.com/photo/2012/04/26/19/43/profile-42914_1280.png" /> @name</p>
+    }
+    }
+<div id="scroll_div" style=" overflow: scroll;overflow-x:hidden; height: 332px">
+    @foreach (var i in message)
+    {
+        
+            <p align="center">@i.Date.ToString("dd:MMMM")</p>
+            <div>
+                <p style="color: blue;">@i.Fromm @i.Date.ToString("HH:mm:ss")</p>
+
+                <form asp-controller="Messages" asp-action="DeleteMessage" method="post" asp-route-id="@i.id">
+                    <div class="form-group">
+
+                        <p>@i.Message</p>
+                        @if (i.Photo != null)
+                        {
+                            <img style='width:80px; height:60px;' src="data:image/jpeg;base64,@(Convert.ToBase64String(i.Photo))" />
+                        }
+                        @if (i.Video != null)
+                        {
+                            <video controls width="300px" height="250px" src="data:video/mp4;base64,@(Convert.ToBase64String(i.Video))"></video>
+                        }
+                        @if (i.Fromm == only)
+                        {
+                            <p align="center">
+                                <input type="submit" class="btn btn-default" value="Удалить" />
+                            </p>
+                        }
+                    </div>
+                </form>
+            </div>
+            }
+    </div>
+    <form style="border: 3px #d4d4f1 solid;" asp-action="CreateMessage" asp-controller="Messages" enctype="multipart/form-data">
+        <div hidden class="form-group">
+            <label asp-for="id" class="control-label"></label>
+            <input type="text" asp-for="id" class="form-control" />
+        </div>
+        <div class="form-group">
+            <label hidden asp-for="Message" class="control-label"></label>
+
+            <label class="upload-file__label" for="upload-file__input_1" asp-for="Photo">
+                <i class="fas fa-chevron-circle-up"></i>
+            </label>
+
+            <input hidden
+                   asp-for="Photo"
+                   type="file"
+                   id="upload-file__input_1"
+                   class="form-control"
+                   accept=".jpg, .jpeg, .png, .gif, .bmp, .doc, .docx, .xls, .xlsx, .txt, .tar, .zip, .7z, .7zip"
+                   multiple>
+
+            <label class="upload-file__label" for="upload-file__input_2" asp-for="Video">
+                <i class="fas fa-video"></i>
+            </label>
+            <input hidden
+                   asp-for="Video"
+                   type="file"
+                   id="upload-file__input_2"
+                   class="form-control"
+                   accept=".mp4"
+                   multiple>
+
+            <input type="text" asp-for="Message" value="" class="form-control" />
+        </div>
+        <div hidden class="form-group">
+            <label asp-for="Fromm" class="control-label">От кого</label>
+            <input type="text" asp-for="Fromm" value="@User.Identity.Name" class="form-control" />
+        </div>
+        <div hidden class="form-group">
+            <label asp-for="Date" class="control-label">Дата</label>
+            <input type="text" asp-for="Date" value="@DateTime.Now" class="form-control" />
+        </div>
+        <div class="form-group">
+            <input type="submit" value="Отправить" class="btn btn-default" enctype="multipart/form-data" />
+        </div>
+    </form>
+</div>
+        <script>
+            var scrollDiv = document.getElementById("scroll_div");
+            scrollDiv.scrollTo(0, scrollDiv.scrollHeight);
+        </script>
+        <link rel="stylesheet" href="~/css/photo.css" />

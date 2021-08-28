@@ -1,0 +1,72 @@
+﻿@using probnik.Data
+@using System.Security.Claims;
+@model probnik.Data.Posts
+@{
+    ViewData["Title"] = "Новости";
+    var coment = ViewBag.Coment as List<Comments>;
+    var posts = ViewBag.Posts as List<Posts>;
+    var idd = User.FindFirstValue(ClaimTypes.NameIdentifier);
+    var mid = ViewBag.Mid;
+    int k = 0;
+    int c = 0;
+}
+<form asp-action="CreatePosts" asp-controller="home" enctype="multipart/form-data">
+    <div hidden class="form-group">
+        <label asp-for="UserId" class="control-label">id</label>
+        <input type="text" asp-for="UserId" value="@idd" class="form-control" />
+    </div>
+    <div hidden class="form-group">
+        <label asp-for="Data" class="control-label">Имя</label>
+        <input type="text" asp-for="Data" value="@DateTime.Now" class="form-control" />
+    </div>
+    <div class="form-group">
+        <label asp-for="Body" class="control-label">Текст</label>
+        <input type="text" asp-for="Body" class="form-control" />
+    </div>
+    <div class="form-group">
+
+        <label class="upload-file__label" for="upload-file__input_1" asp-for="Photo">
+            <i class="fas fa-chevron-circle-up"></i>
+        </label>
+        <input hidden
+               asp-for="Photo"
+               type="file"
+               id="upload-file__input_1"
+               class="form-control"
+               accept=".jpg, .jpeg, .png, .gif, .bmp, .doc, .docx, .xls, .xlsx, .txt, .tar, .zip, .7z, .7zip"
+               multiple>
+    </div>
+    <div class="form-group">
+        <label class="upload-file__label" for="upload-file__input_2" asp-for="Video">
+            <i class="fas fa-video"></i>
+        </label>
+        <input hidden
+               asp-for="Video"
+               type="file"
+               id="upload-file__input_2"
+               class="form-control"
+               accept=".mp4"
+               multiple>
+    </div>
+    <div class="form-group">
+        <label class="upload-file__label" for="upload-file__input_3" asp-for="Music">
+            <i class="fas fa-music"></i>
+        </label>
+        <input hidden
+               asp-for="Music"
+               type="file"
+               id="upload-file__input_3"
+               class="form-control"
+               accept=".mp3"
+               multiple>
+    </div>
+    <div hidden class="form-group">
+        <label asp-for="To" class="control-label">Кому</label>
+        <input type="text" asp-for="To" value="@mid" class="form-control" />
+    </div>
+    <div class="form-group">
+        <input type="submit" value="Отправить" class="btn btn-default" />
+    </div>
+</form>
+<script src="https://kit.fontawesome.com/9a4928363c.js" crossorigin="anonymous"></script>
+

@@ -1,0 +1,98 @@
+﻿@using probnik.Data
+@using System.Security.Claims;
+@model IEnumerable<probnik.Data.Albums>
+@{
+    ViewBag.Title = "Галерея";
+    var count = ViewBag.Count as List<Photos>;
+    var idd = User.FindFirstValue(ClaimTypes.NameIdentifier);
+    var users = ViewBag.Users as List<User>;
+}
+<style>
+    .vcenter {
+        display: inline-block;
+        float: none;
+        vertical-align: middle;
+        text-align: center;
+        margin: 20px 0px 10px 0px;
+    }
+
+    #bg {
+        width: 400px;
+        height: 250px;
+        background-image: url(https://sun9-29.userapi.com/impg/Gm9zXtygE3R7FAYBxUiD3Do0gMGKZ1wlQtndbw/qSZ4wkQnpr8.jpg?size=1080x1080&quality=96&sign=2b515bdfd042facdad103c5fde584955&type=album);
+    }
+</style>
+<script src="/js/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<link rel="stylesheet" href="https://github.com/cfifgzkbcjd15/ramka/img.css">
+<script>
+    function chpok(id) {
+        elem = document.getElementById(id); //находим блок div по его id, который передали в функцию
+        state = elem.style.display; //смотрим, включен ли сейчас элемент
+        if (state == '') elem.style.display = 'none'; //если включен, то выключаем
+        else elem.style.display = ''; //иначе - включаем
+    }
+    $(document).ready(function () {
+        $("figcaption").each(function () {
+            if ($(this).prop("innerHTML").length > 15) {
+                let val = $(this).prop("innerHTML");
+                $(this).attr("title", val);
+                $(this).prop("innerHTML", val.substr(0, 15) + "...")
+            }
+        });
+    });
+
+</script>
+@foreach (var i in users)
+{
+    <a asp-action="CreateAlbums">Добавить Альбом</a>
+    <a asp-action="CreatePhotos">Добавить Фото</a>
+
+}
+<button onclick="chpok('text')">Скрыть/Показать</button>
+
+<div id="text">
+
+
+    @foreach (var item in Model)
+    {
+        <div class="vcenter">
+
+            <div id="example_@item.Id" display:block;">
+                <figure>
+
+                    <figcaption> @item.Title </figcaption>
+                    <a asp-action="Details" asp-controller="Albums" asp-route-id="@item.Id">
+                        @if (item?.Photos != null)
+                        {
+
+                            <img style="margin: 10px; height: 150px; width: 150px; border-radius: 10px;" src="data:image/jpeg;base64,@(Convert.ToBase64String(count.Last(x=>x.albumId==item.Id).Photo))" />
+
+                        }
+                        else
+                        {
+                            <img style="margin: 10px; height: 150px; width: 150px; border-radius: 10px;" src="https://4x4sever.ru/image/cache/no_image-1200x900.png" />
+                        }
+                    </a>
+                    @if (User.IsInRole("admin") || User.IsInRole("editor"))
+                    {
+                        <p><a asp-action="DeleteAlbums" asp-controller="Albums" asp-route-id="@item.Id">Удалить</a></p>
+                    }
+                    @if (count != null)
+                    {
+                        <figcaption>Количество:@count.Where(x => x.albumId == item.Id).Distinct().Count()</figcaption>
+
+                    }
+
+
+                </figure>
+            </div>
+            <button id="example_@(item.Id)_1" onclick="document.getElementById('example_@item.Id').style.display='block'; document.getElementById('example_@(item.Id)_1').style.display='none'; document.getElementById('example_@(item.Id)_2').style.display='block';" style="display:none;">Показать</button>
+
+            <button id="example_@(item.Id)_2" onclick=" document.getElementById('example_@item.Id').style.display='none'; document.getElementById('example_@(item.Id)_2').style.display='none'; document.getElementById('example_@(item.Id)_1').style.display='block';">Скрыть</button>
+
+        </div>
+    }
+</div>
+
+

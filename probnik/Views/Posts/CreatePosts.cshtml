@@ -1,0 +1,433 @@
+﻿@using probnik.ViewModels
+@using probnik.Data
+@model IndexViewModel
+@{
+    ViewData["Title"] = "Новости";
+    var coment = ViewBag.Coment as List<Comments>;
+    var posts = ViewBag.Posts as List<Posts>;
+    int pageSize = ViewBag.PageSize;
+    int k = 0;
+    int c = 0;
+}
+@addTagHelper *, PagerApp
+<style>
+    @@font-face {
+        font-family: 'FontAwesome';
+        src: url('https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/fonts/fontawesome-webfont.woff2') format('woff2'), url('https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/fonts/fontawesome-webfont.woff') format('woff'), url('https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/fonts/fontawesome-webfont.ttf') format('truetype');
+        font-weight: normal;
+        font-style: normal
+    }
+
+    .glyphicon {
+        display: inline-block;
+        font: normal normal normal 14px/1 FontAwesome;
+        font-size: inherit;
+        text-rendering: auto;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale
+    }
+
+    .glyphicon-chevron-right:before {
+        content: "\f054";
+    }
+
+    .glyphicon-chevron-left:before {
+        content: "\f053";
+    }
+
+    .overlay {
+        top: 0;
+        right: 0;
+        bottom: 0;
+        left: 0;
+        z-index: 10;
+        display: none;
+        /* фон затемнения */
+        background-color: rgba(0, 0, 0, 0.65);
+        position: fixed;
+        /* фиксированное поцизионирование */
+        cursor: default;
+        /* тип курсара */
+    }
+
+
+        /* активируем слой затемнения */
+
+        .overlay:target {
+            display: block;
+        }
+
+
+    /* стили модального окна */
+
+    .popup {
+        top: -100%;
+        height: right: 0;
+        left: 50%;
+        font-size: 14px;
+        z-index: 20;
+        margin: 0;
+        width: 60%;
+        min-width: 320px;
+        max-width: 550px;
+        /* фиксированное позиционирование, окно стабильно при прокрутке */
+        position: fixed;
+        padding: 15px;
+        border: 1px solid #383838;
+        background: #fefefe;
+        /* скругление углов */
+        -webkit-border-radius: 4px;
+        -moz-border-radius: 4px;
+        -ms-border-radius: 4px;
+        border-radius: 15px;
+        font: 14px/18px 'Tahoma', Arial, sans-serif;
+        /* внешняя тень */
+        -webkit-box-shadow: 0 15px 20px rgba(0, 0, 0, .22), 0 19px 60px rgba(0, 0, 0, .3);
+        -moz-box-shadow: 0 15px 20px rgba(0, 0, 0, .22), 0 19px 60px rgba(0, 0, 0, .3);
+        -ms-box-shadow: 0 15px 20px rgba(0, 0, 0, .22), 0 19px 60px rgba(0, 0, 0, .3);
+        box-shadow: 0 15px 20px rgba(0, 0, 0, .22), 0 19px 60px rgba(0, 0, 0, .3);
+        -webkit-transform: translate(-50%, -500%);
+        -ms-transform: translate(-50%, -500%);
+        -o-transform: translate(-50%, -500%);
+        transform: translate(-50%, -500%);
+        -webkit-transition: -webkit-transform 0.6s ease-out;
+        -moz-transition: -moz-transform 0.6s ease-out;
+        -o-transition: -o-transform 0.6s ease-out;
+        transition: transform 0.6s ease-out;
+    }
+
+
+    /* активируем модальный блок */
+
+    .overlay:target + .popup {
+        -webkit-transform: translate(-50%, 0);
+        -ms-transform: translate(-50%, 0);
+        -o-transform: translate(-50%, 0);
+        transform: translate(-50%, 0);
+        top: 3%;
+    }
+
+
+    /* формируем кнопку закрытия */
+
+    .close {
+        top: -10px;
+        right: -10px;
+        width: 20px;
+        height: 20px;
+        position: absolute;
+        padding: 0;
+        border: 0px solid #ccc;
+        -webkit-border-radius: 15px;
+        -moz-border-radius: 15px;
+        -ms-border-radius: 15px;
+        -o-border-radius: 15px;
+        border-radius: 0px;
+        background-color: rgba(61, 61, 61, 0.8);
+        -webkit-box-shadow: 0px 0px 10px #000;
+        -moz-box-shadow: 0px 0px 10px #000;
+        box-shadow: 0px 0px 10px #000;
+        text-align: center;
+        text-decoration: none;
+        font: 13px/20px 'Tahoma', Arial, sans-serif;
+        font-weight: bold;
+        -webkit-transition: all ease .8s;
+        -moz-transition: all ease .8s;
+        -ms-transition: all ease .8s;
+        -o-transition: all ease .8s;
+        transition: all ease .8s;
+    }
+
+        .close:before {
+            color: rgba(255, 255, 255, 0.9);
+            content: "X";
+            text-shadow: 0 -1px rgba(0, 0, 0, 0.9);
+            font-size: 12px;
+        }
+
+        .close:hover {
+            background-color: rgba(252, 20, 0, 0.8);
+            -webkit-transform: rotate(360deg);
+            -moz-transform: rotate(360deg);
+            -ms-transform: rotate(360deg);
+            -o-transform: rotate(360deg);
+            transform: rotate(360deg);
+        }
+
+
+    /* изображения внутри окна */
+
+    .popup img {
+        width: 100%;
+        height: 400;
+        border-radius: 15px;
+    }
+
+
+    /* миниатюры слева/справа */
+
+    .pic-left,
+    .pic-right {
+        width: 25%;
+        height: auto;
+    }
+
+    .pic-left {
+        float: left;
+        margin: 5px 15px 5px 0;
+    }
+
+    .pic-right {
+        float: right;
+        margin: 5px 0 5px 15px;
+    }
+
+
+    /* элементы м-медиа, фреймы */
+
+    .popup embed,
+    .popup iframe {
+        top: 0;
+        right: 0;
+        bottom: 0;
+        left: 0;
+        display: block;
+        margin: auto;
+        min-width: 320px;
+        max-width: 600px;
+        width: 100%;
+    }
+
+    .popup h2 {
+        /* заголовок 2 */
+        margin: 0;
+        color: #008000;
+        padding: 5px 0px 10px;
+        text-align: left;
+        text-shadow: 1px 1px 3px #adadad;
+        font-weight: 500;
+        font-size: 1.4em;
+        font-family: 'Tahoma', Arial, sans-serif;
+        line-height: 1.3;
+    }
+
+
+    /* параграфы */
+
+    .popup p {
+        margin: 0;
+        padding: 5px 0
+    }
+
+    .product-wrapper {
+        display: block;
+        width: 100%;
+        float: left;
+        transition: width .2s;
+    }
+
+    .product {
+        display: block;
+        border: 1px solid #b5e9a7;
+        border-radius: 3px;
+        position: relative;
+        background: #fff;
+        margin: 0 20px 20px 0;
+        text-decoration: none;
+        color: #474747;
+        z-index: 0;
+        height: 300px;
+    }
+
+    ul.hr {
+        margin: 0; /* Обнуляем значение отступов */
+        padding: 4px; /* Значение полей */
+    }
+
+        ul.hr li {
+            display: inline; /* Отображать как строчный элемент */
+            margin-right: 5px; /* Отступ слева */
+            border: 0px solid #000; /* Рамка вокруг текста */
+            padding: 3px; /* Поля вокруг текста */
+        }
+
+    a {
+        text-decoration: none;
+    }
+
+    .desk {
+        text-align: center;
+    }
+
+    .desk {
+        text-align: center;
+    }
+
+    #menu, #menu li {
+        margin: 0;
+        padding: 0;
+    }
+
+    #menu {
+        text-align: center;
+    }
+
+        #menu li {
+            display: inline-block;
+            text-align: center;
+        }
+
+        #menu a {
+            display: block;
+            padding: 5px 15px;
+            font-size: 150%;
+            text-decoration: none;
+        }
+
+    .desk img {
+        border-radius: 10px;
+    }
+
+    .vcenter {
+        display: inline-block;
+        float: none;
+        vertical-align: middle;
+        text-align: center;
+        margin: 20px 0px 10px 0px;
+    }
+
+    ul.pagination {
+        display: inline-block;
+        padding: 0;
+        margin: 0;
+    }
+
+        ul.pagination li {
+            display: inline;
+        }
+
+            ul.pagination li a {
+                color: black;
+                float: left;
+                padding: 8px 16px;
+                text-decoration: none;
+                background-color: deepskyblue;
+                margin: 4px;
+            }
+
+    body {
+        background-color: #c3e4e8;
+    }
+</style>
+<script type="text/javascript">
+
+</script>
+<h1>Новости</h1>
+<div>
+    <form asp-controller="Posts" asp-action="Index" method="get">
+        <p>
+            Название новости: <input id="text-to-find" type="text" name="SearchString" />
+            <input type="submit" value="Поиск" />
+        </p>
+    </form>
+</div>
+<page-link page-model="ViewModels.PageViewModel" page-action="Index">
+    <ul class="pagination">
+        @foreach (var i in posts)
+        {
+            if (i.Id % 10 == 1)
+            {
+                int b = i.Id;
+                b = c + 1;
+                <li><a href="/Posts/?page=@b">@(c+=1)</a></li>
+            }
+        }
+    </ul>
+</page-link>
+@if (Model != null)
+{
+    <table align="center">
+        <tr>
+        </tr>
+        @foreach (Posts u in Model.Posts.Distinct())
+        {
+            <tr>
+                <td>
+                    <div class="vcenter">
+                        <ul class="products clearfix">
+                            <div id="example_@u.Id" display:block;">
+                            <li class="product-wrapper">
+                                <div class="thumbnail">
+                                    <a href="#win @u.Id" style="text-decoration: none;">
+                                        <div style="border: 3px blue solid;">
+                                            <p style="color:black"><b>@u.Body</b></p>
+
+                                            @if (u != null)
+                                            {
+                                                <p>
+                                                    Количество комментариев:@coment.Where(x => x.postId == u.Id).Distinct().Count()   <br />
+
+                                                <p> Последний комментарий:@u.Comments.Body  </p>
+                                                </p>
+                                            }
+                                            else
+                                            {
+                                                <p style="border:3px blue  solid;">
+                                                    Количество комментариев:0   <br />
+
+                                                <p> Последний комментарий:  </p>
+                                                </p>
+                                            }
+
+                                        </div>
+                                    </a>
+                                    <!-- Модальное окно №5 -->
+                                    <a href="#x" class="overlay" id="win @u.Id"></a>
+                                    <div class="popup" style="width: 600px;height: 600px;">
+                                        <br />
+                                        <p style="border:3px blue  solid;"><b>@u.Body</b></p>
+                                        @foreach (var i in coment.Where(x => x.postId == u.Id).Select(x => x.Body))
+                                        {
+                                            <div>
+                                                <p>@i<p>
+                                            </div>
+                                        }
+                                        <div class="desk">
+                                            <ul id="menu">
+                                                <li>
+                                                </li>
+                                        </div>
+                                        <a class="close" style="top: 0%;right: 0%;border-radius: 18px;" title="Закрыть" href="#close"></a>
+                                    </div>
+                                    <div class="caption">
+                                        <h3>
+                                            <a href="#"></a>
+                                        </h3>
+                                        <p></p>
+                                    </div>
+                                </div>
+
+                            </li>
+                    </div>
+                    </ul>
+                    </div>
+                </td>
+            </tr>
+        }
+    </table>
+
+}
+<input asp-for="Posts" />
+<br /><page-link page-model="ViewModels.PageViewModel" page-action="Index">
+    <ul class="pagination">
+        @foreach (var u in posts)
+        {
+            if (u.Id % 10 == 1)
+            {
+                int a = u.Id;
+                a = k + 1;
+                <li><a href="/Posts/?page=@a">@(k+=1)</a></li>
+            }
+        }
+    </ul>
+</page-link>

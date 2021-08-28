@@ -1,0 +1,84 @@
+@model probnik.Data.GroupChat
+@{
+    ViewBag.Title = "Создание беседы";
+    var users = ViewBag.Users;
+    var only = User.Identity.Name;
+    var a = 0;
+}
+
+
+@*<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayName("userId")
+            </th>
+            <th>
+                @Html.DisplayName("Name")
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Chat.Creator)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Chat.GroupId)
+            </th>
+            <th>
+                @Html.DisplayName("IsSelected")
+            </th>
+
+            <th></th>
+        </tr>
+    </thead>
+    <form asp-action="AddGroupChat" asp-controller="messages">
+    <tbody>
+
+        @foreach (var item in Model.UsersViewModel)
+        {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.User.Id)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.User.Name)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => User.Identity.Name)
+            </td>
+            <td>
+                <input type="checkbox" asp-for="@item.IsSelected" class="form-control" />
+            </td>
+
+        </tr>
+        }
+        <div class="form-group">
+            <input type="submit" value="Отправить" class="btn btn-default" />
+        </div>
+
+    </tbody>
+    </form>
+</table>*@
+<form asp-action="AddGroupChat" asp-controller="messages">
+        @foreach (var i in users)
+        {
+            a += 1;
+        <div class="form-group">
+            <label class="control-label">@i.Name</label>
+            <input type="checkbox" name="groupModels" value="@i.Id" class="form-control" />
+        </div>
+        <div hidden class="form-group">
+            <label asp-for="Creator" class="control-label">Создатель</label>
+            <input type="text" name="groupModels" value="@only" class="form-control" />
+        </div>
+        <div hidden class="form-group">
+            <label asp-for="GroupId" class="control-label">GroupId</label>
+            <input type="text" name="groupModels" value="" class="form-control" />
+        </div>
+        }
+
+        <div class="form-group">
+            <input type="submit" value="Отправить" class="btn btn-default" />
+        </div>
+    </form>
+
+
+

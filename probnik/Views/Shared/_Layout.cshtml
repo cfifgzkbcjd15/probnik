@@ -1,0 +1,141 @@
+﻿@using probnik.Data
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - probnik</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" />
+    <script src="https://kit.fontawesome.com/9a4928363c.js" crossorigin="anonymous"></script>
+    <link href="https://kit-pro.fontawesome.com/releases/v5.15.4/css/pro.min.css" rel="stylesheet"/>
+    
+</head>
+<style>
+
+    a {
+        color: rgb(108 108 255);
+    }
+    label {
+        color: rgb(108 108 255);
+    }
+    h2 {
+        color: rgb(108 108 255);
+    }
+    p {
+        color: rgb(108 108 255);
+    }
+
+    .header__logo {
+        flex: 0 0 60px;
+        border-radius: 50%;
+        overflow: hidden;
+    }
+
+        .header__logo img {
+            max-width: 100%;
+            display: block;
+        }
+    .bokmenu {
+        height: 22.5%;
+        width: 12%;
+        position: absolute;
+        display: flex;
+        max-width: 25%;
+        min-width: 10px;
+        left: 7%;
+        top: 11%;
+        background-color: rgba(128, 128, 255,0.3);
+        border-radius: 10px;
+    }
+    body { font-size:15px; }
+    @@media (max-width:600px) {
+        body{
+            font-size: 8px;
+        }
+    }
+    @@media (max-width:400px) {
+        .bokmenu {
+            left:15px;
+        }
+    }
+    }
+
+</style>
+<body style=" background: white;">
+    <header>
+        <nav style="border-bottom: 1px solid #b8cadc00 !important;background-color: rgba(128, 128, 255,0.3); width: 100%; " class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light border-bottom  mb-3">
+            <div class="container">
+                <a class="navbar-brand" style="color: rgb(108 108 255);" asp-area="" asp-controller="Home" asp-action="Index">Главная</a>
+
+                @if (User.Identity.IsAuthenticated)
+                {
+                    <div style="position: absolute;right: 2%;">
+
+                        <form method="post" asp-controller="Account" asp-action="Logout">
+                            <span>
+                                <div style="display: inline-block;">
+                                    <a class="nav-link" asp-area="" asp-controller="Home" asp-action="LichnKab">
+                                        Моя страница
+                                    </a>
+                                </div>
+                            </span>
+                            <span>
+                                <div style="display: inline-block;">
+                                    <label class="upload-file__label" for="upload-file__input_output">
+                                        <i class="fal fa-sign-out-alt"></i>
+                                    </label>
+                                    <input hidden id="upload-file__input_output" type="submit" value="Выход" />
+                                </div>
+                            </span>
+
+                        </form>
+                    </div>
+
+                }
+                else
+                {
+                    <div style="top: 28%;position: absolute;right: 2%;">
+                        <a asp-controller="Account" asp-action="Login">Вход</a>
+                        <a asp-controller="Account" asp-action="Register">Регистрация</a>
+                    </div>
+                }
+                </li>
+                </ul>
+            </div>
+            </div>
+
+    </header>
+    @if (User.Identity.IsAuthenticated)
+    {
+
+        <div class="bokmenu" align="left">
+            <ul class="navbar-nav flex-grow-1">
+                <li class="nav-item">
+                    <a class="nav-link" asp-area="" asp-controller="Albums" asp-action="Index">Галерея</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" asp-area="" asp-controller="Posts" asp-action="Index">Новости</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" asp-area="" asp-controller="Messages" asp-action="Index">Сообщения</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" asp-area="" asp-controller="Home" asp-action="GetUsers">Пользователи</a>
+                </li>
+            </ul>
+        </div>
+    }
+
+    <div class="container" style="width: 50%; border-radius: 10px; height: 100%; min-height: 525px; background-color: rgba(128, 128, 255,0.3); ">
+        <main role="main" class="pb-3">
+            @RenderBody()
+        </main>
+    </div>
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    @RenderSection("Scripts", required: false)
+</body>
+</html>

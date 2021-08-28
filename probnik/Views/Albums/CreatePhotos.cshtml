@@ -1,0 +1,31 @@
+@model probnik.Data.Photos
+@{
+    ViewBag.Title = "Добавление пользователя";
+}
+<form asp-action="CreatePhotos" asp-controller="Albums" enctype="multipart/form-data">
+    @using (Html.BeginForm())
+    {
+    <fieldset>
+        <p>
+            Альбом <br />
+            @Html.DropDownListFor(model => model.albumId, ViewBag.Album as SelectList)
+        </p>
+        <div class="form-group">
+            <label asp-for="Title" class="control-label">Описание</label>
+            <input type="text" asp-for="Title" class="form-control" />
+        </div>
+        <div class="form-group">
+            <label asp-for="Photo" class="control-label">Фото</label>
+            <input type="file" asp-for="Photo" class="form-control" />
+        </div>
+        <div hidden class="form-group">
+            <label asp-for="Data" class="control-label">Время добавления</label>
+            <input type="text" asp-for="Data" value="@DateTime.Now" class="form-control" />
+        </div>
+        <div class="form-group">
+            <input type="submit" value="Отправить" class="btn btn-default" />
+        </div>
+    </fieldset>
+    }
+
+</form>
