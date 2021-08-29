@@ -1,9 +1,10 @@
 @using probnik.Data
 @using System.Security.Claims;
-@model IEnumerable<probnik.Data.Messages>
+@model IEnumerable<probnik.Data.AddGroupChat>
 @{
     ViewBag.Title = "Сообщения";
     var user = ViewBag.Users as List<User>;
+    var addGroupChat = ViewBag.addGroupChat as List<AddGroupChat>;
     var groupChat = ViewBag.GroupChat as List<AddGroupChat>;
     var message = ViewBag.Messages as List<Messages>;
     var only = User.Identity.Name;
@@ -18,12 +19,23 @@
         }
     }*/
 }
+
 <a asp-action="AddGroupChat" asp-controller="Messages">Групповой чат</a>
+
 <table class="table">
-    @foreach (var j in groupChat.Where(x => x.user != null)) {
-    <tr>
-    <td>@j.Name</td><td align="right"><a asp-action="GroupMessage" asp-controller="Messages"asp-route-groupId="@j.GroupId"asp-route-name="@j.Name">Написать</a></td></tr>
+    @foreach (var j in addGroupChat.Select(x => x.GroupId).Distinct())
+    {
+        @foreach (var i in Model.Where(x => x.GroupId == j&&x.userId==idd|| x.GroupId == j && x.Creator==only))
+        {
+            <tr>
+                <td>@i.Name</td>
+                <td align="right"><a asp-action="GroupMessage" asp-controller="Messages" asp-route-groupId="@i.GroupId" asp-route-Name="@i.Name">Написать</a></td>
+            </tr>
+            break;
+        }
+
     }
+
     <tr><td colspan="2" align="center">Сообщения</td></tr>
     @foreach (var i in user)
     {

@@ -7,17 +7,14 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace probnik.Data
 {
-    [Index("userId", IsUnique = false)]
-    [Index("groupChatId", IsUnique = false)]
+    [Index("addGroupChatId", IsUnique = false)]
     public class GroupChat
     {
         [Key]
-        [Column("id")]
-        public string id { get; set; }
-        [Column("userId")]
-        public string userId { get; set; }
-        [Column("groupChatId")]
-        public long groupId { get; set; }
+        [Column("Id")]
+        public long Id { get; set; }
+        [Column("addGroupChatId")]
+        public long addGroupChatId { get; set; }
         [Column("message")]
         public string Message { get; set; }
         [Column("photo")]
@@ -29,11 +26,9 @@ namespace probnik.Data
         [Column("date")]
         public DateTime Date { get; set; }
 
-        [ForeignKey("userId")]
-
-        public User user { get; set; }
-        [ForeignKey("groupChatId")]
+        [ForeignKey("addGroupChatId")]
         public AddGroupChat addGroupChat {get; set; }
+        
 
 
     }

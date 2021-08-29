@@ -4,20 +4,55 @@
 @{
     var only = User.Identity.Name;
     var groupId = ViewBag.GroupId;
-    var groupChat = ViewBag.GroupChat;
+    var groupChat = ViewBag.GroupChat as List<GroupChat>;
+    var name = ViewBag.Name;
+    var users = ViewBag.Users as List<User>;
 }
-@foreach(var i in groupChat)
-            {
-    <p>@i.Message</p>
-            }
-<form style="border: 3px #d4d4f1 solid;" asp-action="CreateMessage" asp-controller="Messages" enctype="multipart/form-data">
+<style>
+    body {
+        overflow: hidden;
+    }
+</style>
+<h2 align="center">@name</h2>
+<div id="scroll_div" style=" overflow: scroll;overflow-x:hidden; height: 332px">
+    @if (groupChat != null)
+    {
+        @foreach (var i in groupChat.Where(x=>x.addGroupChatId==groupId))
+        {
+            <p align="center">@i.Date.ToString("dd MMMM")</p>
+            <p style="color: blue;">@i.Fromm @i.Date.ToString("HH:mm:ss")</p>
+
+            <form asp-controller="Messages" asp-action="DeleteGroupMessage" method="post" asp-route-id="@i.Id">
+                <div class="form-group">
+
+                    <p>@i.Message</p>
+                    @if (i.Photo != null)
+                    {
+                        <img style='width:80px; height:60px;' src="data:image/jpeg;base64,@(Convert.ToBase64String(i.Photo))" />
+                    }
+                    @if (i.Video != null)
+                    {
+                        <video controls width="300px" height="250px" src="data:video/mp4;base64,@(Convert.ToBase64String(i.Video))"></video>
+                    }
+                    @if (i.Fromm == only)
+                    {
+                        <p align="center">
+                            <input type="submit" class="btn btn-default" value="Удалить" />
+                        </p>
+                    }
+                </div>
+            </form>
+        }
+    }
+    else
+    {
+        <p aslign="center">Напишите ваше первое сообщение</p>
+    }
+</div>
+<form style="border: 3px #d4d4f1 solid;" asp-action="GroupMessage" asp-controller="Messages" enctype="multipart/form-data">
     <div hidden class="form-group">
-        <label asp-for="userId" class="control-label"></label>
-        <input type="text" asp-for="userId" value="@only" class="form-control" />
-    </div>
-    <div hidden class="form-group">
-        <label asp-for="groupId" class="control-label"></label>
-        <input type="text" asp-for="groupId" value="@groupId" class="form-control" />
+        <label asp-for="addGroupChatId" class="control-label"></label>
+        <input type="text" asp-for="addGroupChatId" value="@groupId" class="form-control" />
     </div>
     <div class="form-group">
         <label hidden asp-for="Message" class="control-label"></label>
@@ -59,5 +94,9 @@
         <input type="submit" value="Отправить" class="btn btn-default" enctype="multipart/form-data" />
     </div>
 </form>
-</div>
+    </div>
+<script>
+    var scrollDiv = document.getElementById("scroll_div");
+    scrollDiv.scrollTo(0, scrollDiv.scrollHeight);
+</script>
 <link rel="stylesheet" href="~/css/photo.css" />

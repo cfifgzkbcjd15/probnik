@@ -20,5 +20,6 @@ namespace probnik.ViewModels
         public string userId { get; set; }
         public string Creator { get; set; }
         public long GroupId { get; set; }
+        public string Name { get; set; }
     }
 }

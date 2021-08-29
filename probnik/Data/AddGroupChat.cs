@@ -25,6 +25,7 @@ namespace probnik.Data
         [ForeignKey("userId")]
 
         public User user { get; set; }
+        public GroupChat groupChat { get; set; }
 
 
     }

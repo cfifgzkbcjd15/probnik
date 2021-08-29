@@ -38,24 +38,12 @@ namespace probnik.Controllers
         {
             var id = User.FindFirstValue(ClaimTypes.NameIdentifier);
             var userName = User.Identity.Name;
-
+            ViewBag.addGroupChat = db.AddGroupChat.ToList();
             ViewBag.Users = db.Users.ToList();
             ViewBag.Photo = db.Messages.Select(x => x.Photo).ToList();
-            ViewBag.GroupChat = db.AddGroupChat.Distinct().ToList();
-
-            //List<Messages> users = new List<Messages>();
-
-            //await db.Messages
-            //    .ForEachAsync(x => 
-            //    {
-            //        if(users.FirstOrDefault(g => x.id == g.id && x.Fromm == userName) == null && (x.Fromm == userName || x.id == id))
-            //        {
-            //            users.Add(x);
-            //        }
-            //    });
-
-            return View(db.Messages.Where(x => x.id == id));
-        }
+            ViewBag.GroupChat = db.GroupChat.ToList();
+            return View(db.AddGroupChat.Distinct());
+                }
         [Authorize]
         public async Task<IActionResult> Message(string id, string name, string Email, byte[] photo)
         {
@@ -173,17 +161,20 @@ namespace probnik.Controllers
         {
             return View();
         }
-        public async Task<IActionResult> GroupMessage(long? groupId,string? Name)
+        public async Task<IActionResult> GroupMessage(long groupId,string Name)
         {
             if (groupId != null)
             {
-                GroupChat groupChat = await db.GroupChat.FirstOrDefaultAsync(p => p.addGroupChat.GroupId == groupId&&p.addGroupChat.Name==Name);
-                if (groupChat != null)
-                {
+                //foreach(var i in db.AddGroupChat.ToList()) {
+                //    GroupChatViewModel groupChatViewModel = new GroupChatViewModel() {GroupId=i.GroupId, Name=i.Name};
+                //         }
+                GroupChat groupChats = await db.GroupChat.FirstOrDefaultAsync(p => p.addGroupChat.GroupId == groupId&&p.addGroupChat.Name==Name);
                     ViewBag.GroupId = groupId;
+                    ViewBag.Name = Name;
                     ViewBag.GroupChat = db.GroupChat.ToList();
-                }
-                return View();
+                    ViewBag.AddGroupChat = db.AddGroupChat.ToList();
+                    ViewBag.Users = db.Users.ToList();
+                    return View();
             }
             return NotFound();
         }
@@ -194,11 +185,11 @@ namespace probnik.Controllers
             await db.SaveChangesAsync();
             return RedirectToAction("Index");
         }
-        public async Task<IActionResult> DeleteGroupMessage(string? id)
+        public async Task<IActionResult> DeleteGroupMessage(long? id)
         {
             if (id != null)
             {
-                GroupChat groupChat = await db.GroupChat.FirstOrDefaultAsync(p => p.id == id);
+                GroupChat groupChat = await db.GroupChat.FirstOrDefaultAsync(p => p.Id == id);
                 if (groupChat != null)
                 {
                     db.GroupChat.Remove(groupChat);

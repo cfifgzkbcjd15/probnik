@@ -127,6 +127,28 @@ namespace probnik.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "AddGroupChat",
+                columns: table => new
+                {
+                    id = table.Column<long>(type: "bigint", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    groupId = table.Column<long>(type: "bigint", nullable: false),
+                    userId = table.Column<string>(type: "nvarchar(450)", nullable: true),
+                    creator = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    name = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_AddGroupChat", x => x.id);
+                    table.ForeignKey(
+                        name: "FK_AddGroupChat_AspNetUsers_userId",
+                        column: x => x.userId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "AspNetUserClaims",
                 columns: table => new
                 {
@@ -212,28 +234,6 @@ namespace probnik.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "GroupChat",
-                columns: table => new
-                {
-                    id = table.Column<long>(type: "bigint", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    groupId = table.Column<long>(type: "bigint", nullable: false),
-                    userId = table.Column<string>(type: "nvarchar(450)", nullable: true),
-                    creator = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    name = table.Column<string>(type: "nvarchar(max)", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_GroupChat", x => x.id);
-                    table.ForeignKey(
-                        name: "FK_GroupChat_AspNetUsers_userId",
-                        column: x => x.userId,
-                        principalTable: "AspNetUsers",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "Messages",
                 columns: table => new
                 {
@@ -282,6 +282,35 @@ namespace probnik.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
+            migrationBuilder.CreateTable(
+                name: "GroupChat",
+                columns: table => new
+                {
+                    Id = table.Column<long>(type: "bigint", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    addGroupChatId = table.Column<long>(type: "bigint", nullable: false),
+                    message = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    photo = table.Column<byte[]>(type: "varbinary(max)", nullable: true),
+                    video = table.Column<byte[]>(type: "varbinary(max)", nullable: true),
+                    fromm = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    date = table.Column<DateTime>(type: "datetime2", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_GroupChat", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_GroupChat_AddGroupChat_addGroupChatId",
+                        column: x => x.addGroupChatId,
+                        principalTable: "AddGroupChat",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateIndex(
+                name: "IX_AddGroupChat_userId",
+                table: "AddGroupChat",
+                column: "userId");
+
             migrationBuilder.CreateIndex(
                 name: "IX_AspNetRoleClaims_RoleId",
                 table: "AspNetRoleClaims",
@@ -327,9 +356,9 @@ namespace probnik.Migrations
                 column: "postId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_GroupChat_userId",
+                name: "IX_GroupChat_addGroupChatId",
                 table: "GroupChat",
-                column: "userId");
+                column: "addGroupChatId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Messages_id",
@@ -378,10 +407,13 @@ namespace probnik.Migrations
                 name: "Posts");
 
             migrationBuilder.DropTable(
-                name: "AspNetUsers");
+                name: "AddGroupChat");
 
             migrationBuilder.DropTable(
                 name: "Albums");
+
+            migrationBuilder.DropTable(
+                name: "AspNetUsers");
         }
     }
 }

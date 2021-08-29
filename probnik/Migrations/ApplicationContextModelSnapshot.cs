@@ -178,7 +178,7 @@ namespace probnik.Migrations
 
                     b.HasIndex("userId");
 
-                    b.ToTable("GroupChat");
+                    b.ToTable("AddGroupChat");
                 });
 
             modelBuilder.Entity("probnik.Data.Albums", b =>
@@ -246,6 +246,45 @@ namespace probnik.Migrations
                     b.HasIndex("postId");
 
                     b.ToTable("Comments");
+                });
+
+            modelBuilder.Entity("probnik.Data.GroupChat", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint")
+                        .HasColumnName("Id")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<DateTime>("Date")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("date");
+
+                    b.Property<string>("Fromm")
+                        .HasColumnType("nvarchar(max)")
+                        .HasColumnName("fromm");
+
+                    b.Property<string>("Message")
+                        .HasColumnType("nvarchar(max)")
+                        .HasColumnName("message");
+
+                    b.Property<byte[]>("Photo")
+                        .HasColumnType("varbinary(max)")
+                        .HasColumnName("photo");
+
+                    b.Property<byte[]>("Video")
+                        .HasColumnType("varbinary(max)")
+                        .HasColumnName("video");
+
+                    b.Property<long>("addGroupChatId")
+                        .HasColumnType("bigint")
+                        .HasColumnName("addGroupChatId");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("addGroupChatId");
+
+                    b.ToTable("GroupChat");
                 });
 
             modelBuilder.Entity("probnik.Data.Messages", b =>
@@ -502,6 +541,17 @@ namespace probnik.Migrations
                         .IsRequired();
 
                     b.Navigation("Posts");
+                });
+
+            modelBuilder.Entity("probnik.Data.GroupChat", b =>
+                {
+                    b.HasOne("probnik.Data.AddGroupChat", "addGroupChat")
+                        .WithMany()
+                        .HasForeignKey("addGroupChatId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("addGroupChat");
                 });
 
             modelBuilder.Entity("probnik.Data.Messages", b =>
