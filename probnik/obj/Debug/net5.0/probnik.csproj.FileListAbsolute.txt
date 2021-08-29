@@ -478,6 +478,7 @@ C:\Users\саша\Desktop\интенсив\probnik\probnik\obj\Debug\net5.0\Razo
 C:\Users\саша\Desktop\интенсив\probnik\probnik\obj\Debug\net5.0\Razor\Views\Posts\CreatePosts.cshtml.g.cs
 C:\Users\саша\Desktop\интенсив\probnik\probnik\obj\Debug\net5.0\Razor\Views\Albums\UsersAlbums.cshtml.g.cs
 C:\Users\саша\Desktop\интенсив\probnik\probnik\obj\Debug\net5.0\Razor\Views\Home\EditUser.cshtml.g.cs
-C:\Users\саша\Desktop\интенсив\probnik\probnik\obj\Debug\net5.0\Razor\Views\Messages\CreateMessage.cshtml.g.cs
 C:\Users\саша\Desktop\интенсив\probnik\probnik\obj\Debug\net5.0\Razor\Views\Messages\Index.cshtml.g.cs
 C:\Users\саша\Desktop\интенсив\probnik\probnik\obj\Debug\net5.0\Razor\Views\Messages\AddGroupChat.cshtml.g.cs
+C:\Users\саша\Desktop\интенсив\probnik\probnik\obj\Debug\net5.0\Razor\Views\Messages\GroupMessage.cshtml.g.cs
+C:\Users\саша\Desktop\интенсив\probnik\probnik\obj\Debug\net5.0\Razor\Views\Messages\Message.cshtml.g.cs

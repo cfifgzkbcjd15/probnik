@@ -11,7 +11,7 @@ namespace probnik.Data
         public DateTime Year { get; set; }
         public byte[] Photo { get; set; }
         public Messages message { get; set; }
-        public virtual IEnumerable<GroupChat> GroupChats { get; set; }
+        public virtual IEnumerable<AddGroupChat> GroupChats { get; set; }
 
     }
 }

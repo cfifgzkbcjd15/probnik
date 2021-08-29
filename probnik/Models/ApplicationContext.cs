@@ -11,7 +11,8 @@ namespace probnik.Models
         public DbSet<Posts> Posts { get; set; }
         public DbSet<Comments> Comments { get; set; }
         public DbSet<Messages> Messages{ get; set; }
-        public DbSet<GroupChat> GroupChat{ get; set; }
+        public DbSet<AddGroupChat> AddGroupChat{ get; set; }
+        public DbSet<GroupChat> GroupChat { get; set; }
         public ApplicationContext(DbContextOptions<ApplicationContext> options)
             : base(options)
         {

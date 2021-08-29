@@ -4,6 +4,7 @@
 @{
     ViewBag.Title = "Сообщения";
     var user = ViewBag.Users as List<User>;
+    var groupChat = ViewBag.GroupChat as List<AddGroupChat>;
     var message = ViewBag.Messages as List<Messages>;
     var only = User.Identity.Name;
     var photo = ViewBag.Photo as List<byte[]>;
@@ -19,9 +20,13 @@
 }
 <a asp-action="AddGroupChat" asp-controller="Messages">Групповой чат</a>
 <table class="table">
+    @foreach (var j in groupChat.Where(x => x.user != null)) {
+    <tr>
+    <td>@j.Name</td><td align="right"><a asp-action="GroupMessage" asp-controller="Messages"asp-route-groupId="@j.GroupId"asp-route-name="@j.Name">Написать</a></td></tr>
+    }
     <tr><td colspan="2" align="center">Сообщения</td></tr>
     @foreach (var i in user)
     {
-        <tr><td>@i.Name</td><td align="right"><a asp-action="CreateMessage" asp-controller="Messages" asp-route-id="@i.Id" asp-route-name="@i.Name" asp-route-Email="@i.Email" asp-route-photo="@i.Photo">Написать</a></td></tr>
+        <tr><td>@i.Name</td><td align="right"><a asp-action="Message" asp-controller="Messages" asp-route-id="@i.Id" asp-route-name="@i.Name" asp-route-Email="@i.Email" asp-route-photo="@i.Photo">Написать</a></td></tr>
     }
 </table>

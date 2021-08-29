@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace probnik.Migrations
 {
-    public partial class Log : Migration
+    public partial class Logg : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -215,11 +215,12 @@ namespace probnik.Migrations
                 name: "GroupChat",
                 columns: table => new
                 {
-                    id = table.Column<int>(type: "int", nullable: false)
+                    id = table.Column<long>(type: "bigint", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     groupId = table.Column<long>(type: "bigint", nullable: false),
                     userId = table.Column<string>(type: "nvarchar(450)", nullable: true),
-                    creator = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                    creator = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    name = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
                 constraints: table =>
                 {

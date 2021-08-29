@@ -1,0 +1,63 @@
+@using probnik.Data
+@using System.Security.Claims;
+@model probnik.Data.GroupChat;
+@{
+    var only = User.Identity.Name;
+    var groupId = ViewBag.GroupId;
+    var groupChat = ViewBag.GroupChat;
+}
+@foreach(var i in groupChat)
+            {
+    <p>@i.Message</p>
+            }
+<form style="border: 3px #d4d4f1 solid;" asp-action="CreateMessage" asp-controller="Messages" enctype="multipart/form-data">
+    <div hidden class="form-group">
+        <label asp-for="userId" class="control-label"></label>
+        <input type="text" asp-for="userId" value="@only" class="form-control" />
+    </div>
+    <div hidden class="form-group">
+        <label asp-for="groupId" class="control-label"></label>
+        <input type="text" asp-for="groupId" value="@groupId" class="form-control" />
+    </div>
+    <div class="form-group">
+        <label hidden asp-for="Message" class="control-label"></label>
+
+        <label class="upload-file__label" for="upload-file__input_1" asp-for="Photo">
+            <i class="fas fa-chevron-circle-up"></i>
+        </label>
+
+        <input hidden
+               asp-for="Photo"
+               type="file"
+               id="upload-file__input_1"
+               class="form-control"
+               accept=".jpg, .jpeg, .png, .gif, .bmp, .doc, .docx, .xls, .xlsx, .txt, .tar, .zip, .7z, .7zip"
+               multiple>
+
+        <label class="upload-file__label" for="upload-file__input_2" asp-for="Video">
+            <i class="fas fa-video"></i>
+        </label>
+        <input hidden
+               asp-for="Video"
+               type="file"
+               id="upload-file__input_2"
+               class="form-control"
+               accept=".mp4"
+               multiple>
+
+        <input type="text" asp-for="Message" value="" class="form-control" />
+    </div>
+    <div hidden class="form-group">
+        <label asp-for="Fromm" class="control-label">От кого</label>
+        <input type="text" asp-for="Fromm" value="@User.Identity.Name" class="form-control" />
+    </div>
+    <div hidden class="form-group">
+        <label asp-for="Date" class="control-label">Дата</label>
+        <input type="text" asp-for="Date" value="@DateTime.Now" class="form-control" />
+    </div>
+    <div class="form-group">
+        <input type="submit" value="Отправить" class="btn btn-default" enctype="multipart/form-data" />
+    </div>
+</form>
+</div>
+<link rel="stylesheet" href="~/css/photo.css" />

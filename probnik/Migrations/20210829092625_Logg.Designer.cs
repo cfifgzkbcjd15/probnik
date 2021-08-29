@@ -10,8 +10,8 @@ using probnik.Models;
 namespace probnik.Migrations
 {
     [DbContext(typeof(ApplicationContext))]
-    [Migration("20210825174244_Log")]
-    partial class Log
+    [Migration("20210829092625_Logg")]
+    partial class Logg
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -152,6 +152,37 @@ namespace probnik.Migrations
                     b.ToTable("AspNetUserTokens");
                 });
 
+            modelBuilder.Entity("probnik.Data.AddGroupChat", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint")
+                        .HasColumnName("id")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<string>("Creator")
+                        .HasColumnType("nvarchar(max)")
+                        .HasColumnName("creator");
+
+                    b.Property<long>("GroupId")
+                        .HasColumnType("bigint")
+                        .HasColumnName("groupId");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("nvarchar(max)")
+                        .HasColumnName("name");
+
+                    b.Property<string>("userId")
+                        .HasColumnType("nvarchar(450)")
+                        .HasColumnName("userId");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("userId");
+
+                    b.ToTable("GroupChat");
+                });
+
             modelBuilder.Entity("probnik.Data.Albums", b =>
                 {
                     b.Property<int>("Id")
@@ -217,33 +248,6 @@ namespace probnik.Migrations
                     b.HasIndex("postId");
 
                     b.ToTable("Comments");
-                });
-
-            modelBuilder.Entity("probnik.Data.GroupChat", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasColumnName("id")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<string>("Creator")
-                        .HasColumnType("nvarchar(max)")
-                        .HasColumnName("creator");
-
-                    b.Property<long>("GroupId")
-                        .HasColumnType("bigint")
-                        .HasColumnName("groupId");
-
-                    b.Property<string>("userId")
-                        .HasColumnType("nvarchar(450)")
-                        .HasColumnName("userId");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("userId");
-
-                    b.ToTable("GroupChat");
                 });
 
             modelBuilder.Entity("probnik.Data.Messages", b =>
@@ -482,6 +486,15 @@ namespace probnik.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("probnik.Data.AddGroupChat", b =>
+                {
+                    b.HasOne("probnik.Data.User", "user")
+                        .WithMany("GroupChats")
+                        .HasForeignKey("userId");
+
+                    b.Navigation("user");
+                });
+
             modelBuilder.Entity("probnik.Data.Comments", b =>
                 {
                     b.HasOne("probnik.Data.Posts", "Posts")
@@ -491,15 +504,6 @@ namespace probnik.Migrations
                         .IsRequired();
 
                     b.Navigation("Posts");
-                });
-
-            modelBuilder.Entity("probnik.Data.GroupChat", b =>
-                {
-                    b.HasOne("probnik.Data.User", "user")
-                        .WithMany()
-                        .HasForeignKey("userId");
-
-                    b.Navigation("user");
                 });
 
             modelBuilder.Entity("probnik.Data.Messages", b =>
@@ -534,6 +538,8 @@ namespace probnik.Migrations
 
             modelBuilder.Entity("probnik.Data.User", b =>
                 {
+                    b.Navigation("GroupChats");
+
                     b.Navigation("message");
                 });
 #pragma warning restore 612, 618

@@ -11,11 +11,14 @@ namespace probnik.ViewModels
 {
     public class GroupChatViewModel
     {
-        public GroupChat Chat { get; set; }
-        public List<UserViewModel> UsersViewModel { get; set; }
-        public GroupChatViewModel()
-        {
-            UsersViewModel =new List<UserViewModel>();
-        }
+        //public GroupChat Chat { get; set; }
+        //public List<UserViewModel> UsersViewModel { get; set; }
+        //public GroupChatViewModel()
+        //{
+        //    UsersViewModel =new List<UserViewModel>();
+        //}
+        public string userId { get; set; }
+        public string Creator { get; set; }
+        public long GroupId { get; set; }
     }
 }

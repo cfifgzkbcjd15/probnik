@@ -7,6 +7,7 @@ using probnik.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using probnik.Data;
 using System.IO;
+using Microsoft.AspNetCore.Http;
 
 namespace probnik.Controllers
 {
@@ -56,7 +57,7 @@ namespace probnik.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Edit(EditUserViewModel model, EdUserViewModel evm)
+        public async Task<IActionResult> Edit(EditUserViewModel model, IFormFile file)
         {
             
             if (ModelState.IsValid)
@@ -64,13 +65,13 @@ namespace probnik.Controllers
                 User user = await _userManager.FindByIdAsync(model.Id);
                 if (user != null)
                 {
-                    if (evm.Photo != null)
+                    if (file != null)
                     {
                         byte[] imageData = null;
                         // считываем переданный файл в массив байтов
-                        using (var binaryReader = new BinaryReader(evm.Photo.OpenReadStream()))
+                        using (var binaryReader = new BinaryReader(file.OpenReadStream()))
                         {
-                            imageData = binaryReader.ReadBytes((int)evm.Photo.Length);
+                            imageData = binaryReader.ReadBytes((int)file.Length);
                         }
                         // установка массива байтов
                         user.Photo = imageData;
