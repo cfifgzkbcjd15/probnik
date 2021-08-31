@@ -1,0 +1,56 @@
+@using probnik.Data
+@using System.Security.Claims;
+@model probnik.Data.AddGroupChat
+@{
+    ViewBag.Title = "Редактирование пользователя";
+    var users = ViewBag.Users as List<User>;
+    var only = User.Identity.Name;
+    var groupId = ViewBag.GroupId;
+    var addGroupChat = ViewBag.AddGroupChat as List<AddGroupChat>;
+    var idd = User.FindFirstValue(ClaimTypes.NameIdentifier);
+    // asp-route-groupId="@Model.GroupId"asp-route-Name="@Model.Name"
+
+}
+<form asp-action="EditGroupChat" asp-controller="Messages" enctype="multipart/form-data">
+    <label>Изменить название</label>
+    <input name="NameGroup" class="form-control" />
+    <label>Изменить фото</label>
+    <input type="file" name="updatedPhoto" class="form-control" />
+    <input hidden type="text" name="addGroupChat[0].userId" value="@idd" class="form-control" />
+    <input hidden name="addGroupChat[0].Id" value="@Model.Id" class="form-control" />
+    <input hidden name="addGroupChat[0].Creator" value="@only" class="form-control" />
+    <input hidden name="addGroupChat[0].GroupId" value="@groupId" class="form-control" />
+    @for (int i = 0; i < users.Count; i++)
+    {
+        <div class="form-group">
+            <input hidden type="text" name="addGroupChat[@i].userId" value="@users[i].Id" class="form-control" />
+            <input hidden name="addGroupChat[@i].Id" value="@users[i].AddGroupChats.Id" class="form-control" />
+            <input hidden name="addGroupChat[@i].Creator" value="@only" class="form-control" />
+            <input hidden name="addGroupChat[@i].GroupId" value="@groupId" class="form-control" />
+        </div>
+
+    }
+    <div class="form-group">
+        <input type="submit" value="Сохранить" class="btn btn-default" />
+    </div>
+</form>
+
+<form asp-controller="Messages" asp-action="DeleteUsersChat" method="post">
+    <table>
+        <tr><td colspan="2" align="center"><h2>Пользователи</h2></td></tr>
+        @foreach (var i in addGroupChat)
+        {
+            <tr>
+                <td>@i.user.Name</td>
+                    <td><input name="Id" type="checkbox" value="@i.Id" /></td>
+            </tr>
+
+        }
+    </table>
+    @foreach (var i in addGroupChat.Where(x=>x.Creator==only))
+    {
+        <div class="form-group">
+            <input type="submit" class="btn btn-default" value="Удалить" />
+        </div>
+    }
+    </form>

@@ -1,89 +1,23 @@
+@using System.Security.Claims;
 @model probnik.Data.AddGroupChat
 @{
     ViewBag.Title = "Создание беседы";
     var users = ViewBag.Users;
+    //var crUsers = ViewBag.CrUsers;
     var only = User.Identity.Name;
     var j = 0;
     var groupId = ViewBag.Chat;
+    var idd = User.FindFirstValue(ClaimTypes.NameIdentifier);
 }
 
-
-@*<table class="table">
-        <thead>
-            <tr>
-                <th>
-                    @Html.DisplayName("userId")
-                </th>
-                <th>
-                    @Html.DisplayName("Name")
-                </th>
-                <th>
-                    @Html.DisplayNameFor(model => model.Chat.Creator)
-                </th>
-                <th>
-                    @Html.DisplayNameFor(model => model.Chat.GroupId)
-                </th>
-                <th>
-                    @Html.DisplayName("IsSelected")
-                </th>
-
-                <th></th>
-            </tr>
-        </thead>
-        <form asp-action="AddGroupChat" asp-controller="messages">
-        <tbody>
-
-            @foreach (var item in Model.UsersViewModel)
-            {
-            <tr>
-                <td>
-                    @Html.DisplayFor(modelItem => item.User.Id)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.User.Name)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => User.Identity.Name)
-                </td>
-                <td>
-                    <input type="checkbox" asp-for="@item.IsSelected" class="form-control" />
-                </td>
-
-            </tr>
-            }
-            <div class="form-group">
-                <input type="submit" value="Отправить" class="btn btn-default" />
-            </div>
-
-        </tbody>
-        </form>
-    </table>*@
-@*<form asp-action="AddGroupChat" asp-controller="messages">
-        @foreach (var i in users)
-        {
-        <div class="form-group">
-            <label class="control-label">@i.Name</label>
-            <input type="checkbox" name="groupModels" value="@i.Id" class="form-control" />
-        </div>
-        <div hidden class="form-group">
-            <label asp-for="Creator" class="control-label">Создатель</label>
-            <input type="text" name="groupModels" value="@only" class="form-control" />
-        </div>
-        <div hidden class="form-group">
-            <label asp-for="GroupId" class="control-label">GroupId</label>
-            <input type="text" name="groupModels" value="" class="form-control" />
-        </div>
-        }
-
-        <div class="form-group">
-            <input type="submit" value="Отправить" class="btn btn-default" />
-        </div>
-    </form>*@
-
-<form asp-action="AddGroupChat" asp-controller="messages">
-
+<form asp-action="AddGroupChat" asp-controller="messages" enctype="multipart/form-data">
     <label class="control-label">Название беседы</label>
     <input name="NameGroup" class="form-control" />
+    <label class="control-label">Фото беседы</label>
+    <input type="file" name="updatedPhoto" class="form-control" />
+    <input hidden type="text" name="groupModels[0].userId" value="@idd" class="form-control" />
+    <input hidden value="@only" name="groupModels[0].Creator" class="form-control" />
+    <input hidden name="groupModels[0].GroupId" value="@groupId" class="form-control" />
     @for (int i = 0; i < users.Count; i++)
     {
 
@@ -93,8 +27,8 @@
                     <input name="groupModels[@i].Name" class="form-control" />*@
                 <label class="control-label">@users[i].Name</label>
                 <input type="checkbox" name="groupModels[@i].userId" value="@users[i].Id" class="form-control" />
-                <input hidden name="groupModels[@i].Creator" value="@only" class="form-control" />
-                <input hidden name="groupModels[@i].GroupId" value="@(groupId+1)" class="form-control" />
+                <input hidden name="groupModels[@i].Creator" class="form-control" />
+                <input hidden name="groupModels[@i].GroupId" value="@groupId" class="form-control" />
             </div>
         </div>
     }

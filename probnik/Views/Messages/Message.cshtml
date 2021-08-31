@@ -61,7 +61,7 @@
             </div>
             }
     </div>
-    <form style="border: 3px #d4d4f1 solid;" asp-action="CreateMessage" asp-controller="Messages" enctype="multipart/form-data">
+    <form style="border: 3px #d4d4f1 solid;" asp-action="Message" asp-controller="Messages" enctype="multipart/form-data">
         <div hidden class="form-group">
             <label asp-for="id" class="control-label"></label>
             <input type="text" asp-for="id" class="form-control" />
@@ -103,7 +103,7 @@
             <input type="text" asp-for="Date" value="@DateTime.Now" class="form-control" />
         </div>
         <div class="form-group">
-            <input type="submit" value="Отправить" class="btn btn-default" enctype="multipart/form-data" />
+            <input type="submit" value="Отправить" class="btn btn-default"/>
         </div>
     </form>
 </div>

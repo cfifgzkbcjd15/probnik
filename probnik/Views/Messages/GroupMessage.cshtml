@@ -5,6 +5,7 @@
     var only = User.Identity.Name;
     var groupId = ViewBag.GroupId;
     var groupChat = ViewBag.GroupChat as List<GroupChat>;
+    var addGroupChat = ViewBag.AddGroupChat as List<AddGroupChat>;
     var name = ViewBag.Name;
     var users = ViewBag.Users as List<User>;
 }
@@ -13,7 +14,22 @@
         overflow: hidden;
     }
 </style>
-<h2 align="center">@name</h2>
+<table align="center">
+   
+    <tr>
+        @foreach (var i in addGroupChat)
+        {
+                if (i.Photo != null) {
+            <td><img style='width:60px; height:60px;border-radius:30px;' src="data:image/jpeg;base64,@(Convert.ToBase64String(i.Photo))" /></td>
+            }
+        }
+        <td align="right">@name</td>
+    </tr>
+</table>
+@foreach(var i in addGroupChat) {
+<a asp-action="EditGroupChat" asp-controller="Messages" asp-route-groupId="@i.GroupId"asp-route-userId="@i.userId">Изменить</a>
+    break;
+}
 <div id="scroll_div" style=" overflow: scroll;overflow-x:hidden; height: 332px">
     @if (groupChat != null)
     {
@@ -63,6 +79,7 @@
 
         <input hidden
                asp-for="Photo"
+               name="uploadPhoto"
                type="file"
                id="upload-file__input_1"
                class="form-control"
@@ -74,6 +91,7 @@
         </label>
         <input hidden
                asp-for="Video"
+               name="uploadVideo"
                type="file"
                id="upload-file__input_2"
                class="form-control"

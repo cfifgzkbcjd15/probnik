@@ -170,6 +170,10 @@ namespace probnik.Migrations
                         .HasColumnType("nvarchar(max)")
                         .HasColumnName("name");
 
+                    b.Property<byte[]>("Photo")
+                        .HasColumnType("varbinary(max)")
+                        .HasColumnName("photo");
+
                     b.Property<string>("userId")
                         .HasColumnType("nvarchar(450)")
                         .HasColumnName("userId");
@@ -526,7 +530,7 @@ namespace probnik.Migrations
             modelBuilder.Entity("probnik.Data.AddGroupChat", b =>
                 {
                     b.HasOne("probnik.Data.User", "user")
-                        .WithMany("GroupChats")
+                        .WithMany("AddGroupChats")
                         .HasForeignKey("userId");
 
                     b.Navigation("user");
@@ -546,8 +550,8 @@ namespace probnik.Migrations
             modelBuilder.Entity("probnik.Data.GroupChat", b =>
                 {
                     b.HasOne("probnik.Data.AddGroupChat", "addGroupChat")
-                        .WithMany()
-                        .HasForeignKey("addGroupChatId")
+                        .WithOne("groupChat")
+                        .HasForeignKey("probnik.Data.GroupChat", "addGroupChatId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -574,6 +578,11 @@ namespace probnik.Migrations
                     b.Navigation("albums");
                 });
 
+            modelBuilder.Entity("probnik.Data.AddGroupChat", b =>
+                {
+                    b.Navigation("groupChat");
+                });
+
             modelBuilder.Entity("probnik.Data.Albums", b =>
                 {
                     b.Navigation("Photos");
@@ -586,7 +595,7 @@ namespace probnik.Migrations
 
             modelBuilder.Entity("probnik.Data.User", b =>
                 {
-                    b.Navigation("GroupChats");
+                    b.Navigation("AddGroupChats");
 
                     b.Navigation("message");
                 });

@@ -19,6 +19,8 @@ namespace probnik.Data
         public string userId { get; set; }
         [Column("creator")]
         public string Creator { get; set; }
+        [Column("photo")]
+        public byte[] Photo { get; set; }
         [Column("name")]
         public string Name { get; set; }
 

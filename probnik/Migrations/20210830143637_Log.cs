@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace probnik.Migrations
 {
-    public partial class Logg : Migration
+    public partial class Log : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -135,6 +135,7 @@ namespace probnik.Migrations
                     groupId = table.Column<long>(type: "bigint", nullable: false),
                     userId = table.Column<string>(type: "nvarchar(450)", nullable: true),
                     creator = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    photo = table.Column<byte[]>(type: "varbinary(max)", nullable: true),
                     name = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
                 constraints: table =>
