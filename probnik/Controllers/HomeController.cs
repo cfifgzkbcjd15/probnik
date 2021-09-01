@@ -57,14 +57,20 @@ namespace probnik.Controllers
             {
 
                 User user = await db.Users.FirstOrDefaultAsync(p => p.Id == id);
-                ViewBag.Mid = id;
-                ViewBag.Posts = db.Posts.ToList();
-                ViewBag.Comments = db.Comments.ToList();
-                ViewBag.User = db.Users.ToList();
-                ViewBag.Albums = db.Albums.ToList();
+                var idd = User.FindFirstValue(ClaimTypes.NameIdentifier);
+                ViewBag.Albums = db.Albums.Where(x => x.UserId == idd).ToList();
                 ViewBag.Photos = db.Photos.ToList();
-                if (user != null)
-                    return View();
+                ViewBag.Posts = db.Posts.Where(x => x.To == idd).ToList();
+                var list = db.Posts.Where(x => x.To == id).ToList();
+                ViewBag.Mid = id;
+                foreach (var i in list)
+                {
+                    ViewBag.Comments = db.Comments.Where(x => x != null && x.postId == i.Id).ToList();
+                }
+                ViewBag.User = db.Users.Where(x => x.Email == User.Identity.Name).ToList();
+                ViewBag.UserId = db.Users.Where(x => x.Id == id).ToList();
+                if (user!=null)
+                return View();
             }
             return NotFound("Страница удалена");
         }
@@ -200,11 +206,15 @@ namespace probnik.Controllers
         }
         public IActionResult LichnKab()
         {
-            ViewBag.Albums = db.Albums.ToList();
+            var idd = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            ViewBag.Albums = db.Albums.Where(x => x.UserId == idd).ToList();
             ViewBag.Photos = db.Photos.ToList();
-            ViewBag.Posts = db.Posts.ToList();
-            ViewBag.Comments = db.Comments.ToList();
-            ViewBag.User = db.Users.ToList();
+            ViewBag.Posts = db.Posts.Where(x=>x.To == idd).ToList();
+            var list= db.Posts.Where(x => x.To == idd).ToList();
+            foreach (var i in list) {
+                ViewBag.Comments = db.Comments.Where(x => x != null && x.postId == i.Id).ToList();
+            }
+            ViewBag.User = db.Users.Where(x => x.Email == User.Identity.Name).ToList();
             return View();
         }
         [HttpPost]
@@ -271,6 +281,46 @@ namespace probnik.Controllers
             }
             return View(model);
         }
+        public IActionResult Friends()
+        {
+            var idd = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            ViewBag.Friends = db.Friends.Where(x=>x.Recipient==idd&&x.Confirmation=="false").ToList();
+            ViewBag.User = db.Users.ToList();
+            return View(db.Friends.Where(x => x.Recipient == idd && x.Confirmation == "true").ToList());
+        }
+        [HttpPost]
+        public async Task<IActionResult> addFriends(string sender,string recipient,string confirmation)
+        {
+            Friends friends = new Friends() {Sender = sender, Recipient = recipient,Confirmation=confirmation };
+            db.Friends.Add(friends);
+            await db.SaveChangesAsync();
+            return RedirectToAction("Index");
+        }
+        [HttpPost]
+        public async Task<IActionResult> EditFriends(long id, string sender, string recipient, string confirmation)
+        {
+            Friends friends = new Friends() { Id = id, Sender = sender, Recipient = recipient, Confirmation = confirmation };
+            db.Friends.Update(friends);
+            await db.SaveChangesAsync();
+            return RedirectToAction("Index");
+        }
+        [HttpPost]
+        public async Task<IActionResult> reject_addition(long?id)
+        {
+            if (id != null)
+            {
+                Friends friends = await db.Friends.FirstOrDefaultAsync(p => p.Id == id);
+                if (friends != null)
+                {
+                    db.Friends.Update(friends);
+                    await db.SaveChangesAsync();
+                    return RedirectToAction("Index");
+                }
+            }
+            return NotFound();
+
+        }
+
         public IActionResult Privacy()
         {
             return View();

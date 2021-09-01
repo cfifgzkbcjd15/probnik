@@ -252,6 +252,36 @@ namespace probnik.Migrations
                     b.ToTable("Comments");
                 });
 
+            modelBuilder.Entity("probnik.Data.Friends", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint")
+                        .HasColumnName("id")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<string>("Confirmation")
+                        .HasColumnType("nvarchar(max)")
+                        .HasColumnName("confirmation");
+
+                    b.Property<string>("Recipient")
+                        .HasColumnType("nvarchar(max)")
+                        .HasColumnName("recipient");
+
+                    b.Property<string>("Sender")
+                        .HasColumnType("nvarchar(max)")
+                        .HasColumnName("sender");
+
+                    b.Property<string>("userId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("userId");
+
+                    b.ToTable("Friends");
+                });
+
             modelBuilder.Entity("probnik.Data.GroupChat", b =>
                 {
                     b.Property<long>("Id")
@@ -530,8 +560,8 @@ namespace probnik.Migrations
             modelBuilder.Entity("probnik.Data.AddGroupChat", b =>
                 {
                     b.HasOne("probnik.Data.User", "user")
-                        .WithMany("AddGroupChats")
-                        .HasForeignKey("userId");
+                        .WithOne("AddGroupChats")
+                        .HasForeignKey("probnik.Data.AddGroupChat", "userId");
 
                     b.Navigation("user");
                 });
@@ -545,6 +575,15 @@ namespace probnik.Migrations
                         .IsRequired();
 
                     b.Navigation("Posts");
+                });
+
+            modelBuilder.Entity("probnik.Data.Friends", b =>
+                {
+                    b.HasOne("probnik.Data.User", "user")
+                        .WithMany()
+                        .HasForeignKey("userId");
+
+                    b.Navigation("user");
                 });
 
             modelBuilder.Entity("probnik.Data.GroupChat", b =>

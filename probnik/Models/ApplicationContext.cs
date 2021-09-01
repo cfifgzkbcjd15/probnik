@@ -13,11 +13,12 @@ namespace probnik.Models
         public DbSet<Messages> Messages{ get; set; }
         public DbSet<AddGroupChat> AddGroupChat{ get; set; }
         public DbSet<GroupChat> GroupChat { get; set; }
+        public DbSet<Friends> Friends { get; set; }
         public ApplicationContext(DbContextOptions<ApplicationContext> options)
             : base(options)
         {
-          // Database.EnsureDeleted();   // удаляем бд со старой схемой
-           //Database.EnsureCreated();   // создаем бд с новой схемой
+          //Database.EnsureDeleted();   // удаляем бд со старой схемой
+          //Database.EnsureCreated();   // создаем бд с новой схемой
         }
     }
 }

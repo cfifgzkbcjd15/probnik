@@ -23,9 +23,8 @@ namespace probnik.Controllers
     public class MessegaseModel
     {
         public List<AddGroupChat> AddGroupChats { get; set; }
+        public List<User> User { get; set; }
 
-        public int Age { get; set; }
-        public decimal Balance { get; set; }
     }
 
 
@@ -36,7 +35,6 @@ namespace probnik.Controllers
         private readonly ILogger<MessagesController> _logger;
         UserManager<User> _userManager;
         RoleManager<IdentityRole> _roleManager;
-
 
         public MessagesController(ILogger<MessagesController> logger, ApplicationContext context, UserManager<User> userManager, RoleManager<IdentityRole> roleManager)
         {
@@ -50,20 +48,16 @@ namespace probnik.Controllers
         {
             var id = User.FindFirstValue(ClaimTypes.NameIdentifier);
             var userName = User.Identity.Name;
-            long groupId = 1;
             var list = db.AddGroupChat.Where(x => x.userId == id && x.Name != null).ToList();
+            var user = db.Users.ToList();
+            //.Where(x => x.message != null)
 
             MessegaseModel model = new MessegaseModel()
             {
-                AddGroupChats = list
+                AddGroupChats = list,
+                User = user
             };
-
-            //foreach (var i in list)
-            //{
-            //    groupId = db.AddGroupChat.FirstOrDefault(x => x.GroupId== i.GroupId).GroupId;
-            //}
-            ViewBag.addGroupChat = db.AddGroupChat.Where(x => x.GroupId == groupId && x.Name != null).ToList();
-            ViewBag.Users = db.Users.ToList();
+            //ViewBag.Users = db.Users.ToList();
             ViewBag.Photo = db.Messages.Select(x => x.Photo).ToList();
             ViewBag.GroupChat = db.GroupChat.ToList();
             return View(model);
@@ -75,8 +69,6 @@ namespace probnik.Controllers
             {
                 Messages messages = await db.Messages
                     .FirstOrDefaultAsync(p => p.id == id && p.user.Name == name && p.user.Email == Email && p.user.Photo == photo);
-                if (messages != null)
-                {
                     var only = User.Identity.Name;
                     var idd = User.FindFirstValue(ClaimTypes.NameIdentifier);
                     ViewBag.Message = db.Messages
@@ -86,32 +78,8 @@ namespace probnik.Controllers
                     ViewBag.Users = db.Users
                         .Where(x => x.Id == id)
                         .ToList();
-                    ViewBag.Mid = id;
                     ViewBag.Name = name;
-                    ViewBag.Emaill = Email;
-                    ViewBag.Photo = photo;
                     return View(messages);
-
-                }
-                else
-                {
-                    var only = User.Identity.Name;
-                    var idd = User.FindFirstValue(ClaimTypes.NameIdentifier);
-                    ViewBag.Message = db.Messages
-                        .Where(x => (x.id == id && x.Fromm == only) || (x.Fromm == Email && x.id == idd))
-                        .OrderBy(x => x.Date)
-                        .ToList();
-                    ViewBag.Users = db.Users
-                        .Where(x => x.Id == id)
-                        .ToList();
-                    ViewBag.Mid = id;
-                    ViewBag.Name = name;
-                    ViewBag.Emaill = Email;
-                    ViewBag.Photo = photo;
-                    return View();
-                }
-
-
             }
             return NotFound();
 
@@ -177,10 +145,6 @@ namespace probnik.Controllers
             }
             return NotFound();
         }
-        //public async Task<IActionResult> GroupChat()
-        //{
-        //    return View();
-        //}
         public async Task<IActionResult> AddGroupChat()
         {
             var only = User.Identity.Name;

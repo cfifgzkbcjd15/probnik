@@ -7,6 +7,7 @@
     var comment = ViewBag.Comments as List<Comments>;
     var user = ViewBag.User as List<User>;
     var mid = ViewBag.Mid;
+    var userId = ViewBag.UserId as List<User>;
     var only = User.Identity.Name;
     var idd = User.FindFirstValue(ClaimTypes.NameIdentifier);
     var albums = ViewBag.Albums as List<Albums>;
@@ -16,6 +17,7 @@
     .verticalLine {
         border: 1px solid #ebf3f5;
     }
+
     .photo {
         width: 100px;
         height: 100px;
@@ -38,119 +40,114 @@
         }
     }
 </style>
-@foreach (var i in user.Where(x => x.Id == mid))
-{
-    <h1>Личный кабинет</h1>
-    @if (i.Photo != null)
+<center>
+    @foreach (var i in userId)
     {
-        <img class="photo" style='width:120px; height:100px;' src="data:image/jpeg;base64,@(Convert.ToBase64String(i.Photo))" />
-    }
-    else
-    {
-        <img class="photo" style='width:120px; height:100px;' src="https://cdn.pixabay.com/photo/2012/04/26/19/43/profile-42914_1280.png" />
+        <h1>Личный кабинет</h1>
+        @if (i.Photo != null)
+        {
+            <img class="photo" style='width:120px; height:100px;' src="data:image/jpeg;base64,@(Convert.ToBase64String(i.Photo))" />
+        }
+        else
+        {
+            <img class="photo" style='width:120px; height:100px;' src="https://cdn.pixabay.com/photo/2012/04/26/19/43/profile-42914_1280.png" />
+        }
+        <br />
+
+        <p>Имя: @i.Name</p>
+        <p>Возраст: @(2021-i.Year.Year)</p>
+        <p>Номер Телефона: @i.PhoneNumber</p>
+        <p>Почта: @i.Email</p>
+        <a asp-action="UsersAlbums" asp-controller="albums" asp-route-userId="@mid">Альбом</a>
     }
     <br />
 
-    <p>Имя: @i.Name</p>
-    <p>Возраст: @(2021-i.Year.Year)</p>
-    <p>Номер Телефона: @i.PhoneNumber</p>
-    <p>Почта: @i.Email</p>
-    <a asp-action="UsersAlbums" asp-controller="albums" asp-route-userId="@mid">Альбом</a>
-}
-<br />
-@foreach (var i in albums.Where(x => x.UserId == mid))
-{
-    foreach (var j in photos.Where(x => x.albumId == i.Id))
-    {
-        <img style='width:100px; height:100px;' src="data:image/jpeg;base64,@(Convert.ToBase64String(j.Photo))" />
-    }
-    break;
-}
-<br />
-<a asp-action="CreatePosts" asp-route-id="@mid">Добавить Новость</a>
-@if (post != null)
-{
-    foreach (var i in post)
-    {
-
-        if (i.To == mid)
-        {
-<div style="border: 3px solid #ebf3f5">
-    @foreach (var j in comment)
-    {
-
-        if (comment != null && j.postId == i.Id)
-        {
-            <p align="left">@j.Name</p>
-            break;
-        }
-    }
-    <p>@i.Body</p>
-    @if (i.Photo != null)
-    {
-        <img style='width:80px; height:60px;' src="data:image/jpeg;base64,@(Convert.ToBase64String(i.Photo))" />
-    }
-    @if (i.Video != null)
-    {
-        <video controls width="300px" height="250px" src="data:video/mp4;base64,@(Convert.ToBase64String(i.Video))"></video>
-    }
-    @if (i.Music != null)
-    {
-        <audio controls width="300px" height="250px" src="data:audio/mp3;base64,@(Convert.ToBase64String(i.Music))"></audio>
-    }
-    @if (User.IsInRole("admin") || User.IsInRole("editor"))
-    {
-        <form asp-controller="Home" asp-action="DeletePosts" method="post" asp-route-id="@i.Id">
-            <p align="center">
-                <input type="submit" class="btn btn-default" value="Удалить" />
-            </p>
-        </form>
-    }
-    <div class="verticalLine"></div>
-    @foreach (var j in comment)
-    {
-
-        if (comment != null && j.postId == i.Id)
-        {
-            <div>
-                <p align="left">@j.Name</p>
-                <p>@j.Body</p>
-            </div>
-            <form asp-controller="Home" asp-action="DeleteComments" method="post" asp-route-id="@i.Id">
-                <p align="center">
-                    <input type="submit" class="btn btn-default" value="Удалить" />
-                </p>
-            </form>
-            <div class="verticalLine"></div>
-        }
-    }
-    <div class="verticalLine"></div>
-    <form asp-action="LichnKab" asp-controller="home">
-        <div hidden class="form-group">
-            <label asp-for="postId" class="control-label">Имя</label>
-            <input type="text" asp-for="postId" value="@i.Id" class="form-control" />
-        </div>
-        <div hidden class="form-group">
-            <label asp-for="Data" class="control-label">Имя</label>
-            <input type="text" asp-for="Data" value="@DateTime.Now" class="form-control" />
-        </div>
-        <div align="left" class="form-group">
-            <label asp-for="Body" class="control-label">Комментарий</label>
-            <input type="text" asp-for="Body" class="form-control" />
-        </div>
-        @foreach (var j in user.Where(x => x.Email == User.Identity.Name))
-        {
-            <div hidden align="left" class="form-group">
-                <label asp-for="Name" class="control-label">Автор поста</label>
-                <input type="text" asp-for="Name" value="@j.Name" class="form-control" />
-            </div>
-        }
+    <form asp-action="AddFriends" asp-controller="home">
+        <input hidden name="sender" value="@idd" />
+        <input hidden name="recipient" value="@mid" />
+        <input hidden name="confirmation" value="false" />
         <div class="form-group">
-            <input type="submit" value="Отправить" class="btn btn-default" />
+            <input type="submit" value="Добавить в друзья" class="btn btn-default" />
         </div>
     </form>
-</div>
+
+    @foreach (var i in albums)
+    {
+        foreach (var j in photos)
+        {
+            <img style='width:100px; height:100px;' src="data:image/jpeg;base64,@(Convert.ToBase64String(j.Photo))" />
+        }
+        break;
+    }
+    <br />
+    <a asp-action="CreatePosts" asp-route-id="@mid">Добавить Новость</a>
+    @if (post != null)
+    {
+        foreach (var i in post)
+        {
+            <div style="border: 3px solid #ebf3f5">
+                <p>@i.Body</p>
+                @if (i.Photo != null)
+                {
+                    <img style='width:80px; height:60px;' src="data:image/jpeg;base64,@(Convert.ToBase64String(i.Photo))" />
+                }
+                @if (i.Video != null)
+                {
+                    <video controls width="300px" height="250px" src="data:video/mp4;base64,@(Convert.ToBase64String(i.Video))"></video>
+                }
+                @if (i.Music != null)
+                {
+                    <audio controls width="300px" height="250px" src="data:audio/mp3;base64,@(Convert.ToBase64String(i.Music))"></audio>
+                }
+                @if (User.IsInRole("admin") || User.IsInRole("editor"))
+                {
+                    <form asp-controller="Home" asp-action="DeletePosts" method="post" asp-route-id="@i.Id">
+                        <p align="center">
+                            <input type="submit" class="btn btn-default" value="Удалить" />
+                        </p>
+                    </form>
+                }
+                <div class="verticalLine"></div>
+                @foreach (var j in comment)
+                {
+                    <div>
+                        <p align="left">@j.Name</p>
+                        <p>@j.Body</p>
+                    </div>
+                    <form asp-controller="Home" asp-action="DeleteComments" method="post" asp-route-id="@i.Id">
+                        <p align="center">
+                            <input type="submit" class="btn btn-default" value="Удалить" />
+                        </p>
+                    </form>
+                    <div class="verticalLine"></div>
+                }
+                <div class="verticalLine"></div>
+                <form asp-action="LichnKab" asp-controller="home">
+                    <div hidden class="form-group">
+                        <label asp-for="postId" class="control-label">Имя</label>
+                        <input type="text" asp-for="postId" value="@i.Id" class="form-control" />
+                    </div>
+                    <div hidden class="form-group">
+                        <label asp-for="Data" class="control-label">Имя</label>
+                        <input type="text" asp-for="Data" value="@DateTime.Now" class="form-control" />
+                    </div>
+                    <div align="left" class="form-group">
+                        <label asp-for="Body" class="control-label">Комментарий</label>
+                        <input type="text" asp-for="Body" class="form-control" />
+                    </div>
+                    @foreach (var j in user)
+                    {
+                        <div hidden align="left" class="form-group">
+                            <label asp-for="Name" class="control-label">Автор поста</label>
+                            <input type="text" asp-for="Name" value="@j.Name" class="form-control" />
+                        </div>
+                    }
+                    <div class="form-group">
+                        <input type="submit" value="Отправить" class="btn btn-default" />
+                    </div>
+                </form>
+            </div>
             <br />
         }
     }
-}
+</center>

@@ -15,30 +15,46 @@
     .verticalLine {
         border: 1px solid #ebf3f5;
     }
+
     .photo {
         width: 100px;
         height: 100px;
     }
+
     img {
         width: 90px;
         height: 90px;
     }
+
     @@media (max-width:600px) {
         img {
             width: 60px;
             height: 60px;
         }
+
         .photo {
             width: 60px;
             height: 60px;
         }
     }
 </style>
-
-    <a asp-action="EditUser" asp-route-id="@idd">Редактировать</a>
+<script src="/js/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<script>
+    $(document).ready(function () {
+        $("figcaption").each(function () {
+            if ($(this).prop("innerHTML").length > 30) {
+                let val = $(this).prop("innerHTML");
+                $(this).attr("title", val);
+                $(this).prop("innerHTML", val.substr(0, 30) + "...")
+            }
+        });
+    });
+</script>
+<a asp-action="EditUser" asp-route-id="@idd">Редактировать</a>
 <center>
-    
-    @foreach (var i in user.Where(x => x.Email == User.Identity.Name))
+
+    @foreach (var i in user)
     {
         <h2>@i.Name</h2>
         @if (i.Photo != null)
@@ -58,7 +74,7 @@
         <a asp-action="Index" asp-controller="albums" asp-route-id="@idd">Фотографии</a>
     }
     <br />
-    @foreach (var i in albums.Where(x => x.UserId == idd))
+    @foreach (var i in albums)
     {
         foreach (var j in photos.Where(x => x.albumId == i.Id))
         {
@@ -74,19 +90,7 @@
     {
         foreach (var i in post)
         {
-
-            if (i.To == idd)
-            {
                 <div style="border: 3px solid #ebf3f5">
-                    @foreach (var j in comment)
-                    {
-
-                        if (comment != null && j.postId == i.Id)
-                        {
-                            <p align="left">@j.Name</p>
-                            break;
-                        }
-                    }
                     <p>@i.Body</p>
                     @if (i.Photo != null)
                     {
@@ -111,18 +115,16 @@
                     <div class="verticalLine"></div>
                     @foreach (var j in comment)
                     {
-
-                        if (comment != null && j.postId == i.Id)
                         {
-                            <div>
+                            <figure>
                                 <p align="left">@j.Name</p>
-                                <p>@j.Body</p>
-                            </div>
-                            <form asp-controller="Home" asp-action="DeleteComments" method="post" asp-route-id="@i.Id">
-                                <p align="center">
-                                    <input type="submit" class="btn btn-default" value="Удалить" />
-                                </p>
-                            </form>
+                                <figcaption>@j.Body</figcaption>
+                                <form asp-controller="Home" asp-action="DeleteComments" method="post" asp-route-id="@i.Id">
+                                    <p align="center">
+                                        <input type="submit" class="btn btn-default" value="Удалить" />
+                                    </p>
+                                </form>
+                            </figure>
                             <div class="verticalLine"></div>
                         }
                     }
@@ -173,7 +175,7 @@
                                    accept=".mp3"
                                    multiple>
                         </div>
-                        @foreach (var j in user.Where(x => x.Email == User.Identity.Name))
+                        @foreach (var j in user)
                         {
                             <div hidden align="left" class="form-group">
                                 <label asp-for="Name" class="control-label">Автор поста</label>
@@ -186,7 +188,6 @@
                     </form>
                 </div>
                 <br />
-            }
         }
     }
 </center>

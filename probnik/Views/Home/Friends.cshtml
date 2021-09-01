@@ -1,0 +1,63 @@
+@using probnik.Controllers
+@using System.Security.Claims;
+@using probnik.Data;
+@model IEnumerable<probnik.Data.Friends>
+@{
+    var idd = User.FindFirstValue(ClaimTypes.NameIdentifier);
+    var user = ViewBag.User as List<User>;
+    var friends = ViewBag.Friends as List<Friends>;
+}
+<center>
+    <h2>Заявки в друзья</h2>
+    @if (friends != null) {
+    <form asp-action="EditFriends" asp-controller="home">
+        @foreach (var j in user.Where(x => x.Id == friends.Last().Sender))
+        {
+            <p>@j.Name</p>
+        }
+        <input hidden name="id" value="@friends.Last().Id" />
+        <input hidden name="sender" value="@friends.Last().Sender" />
+        <input hidden name="recipient" value="@idd" />
+        <input hidden name="confirmation" value="true" />
+        <div>
+            <input type="submit" value="Добавить в друзья" class="btn btn-default" />
+        </div>
+    </form>
+    
+    <form asp-controller="Home" asp-action="reject_addition" method="post">
+        <input hidden name="id" value="@friends.Last().Id" />
+        <input hidden name="sender" value="@friends.Last().Sender" />
+        <input hidden name="recipient" value="@idd" />
+        <input hidden name="confirmation" value="true" />
+        <div class="form-group">
+            <input type="submit" class="btn btn-default" value="Отклонить добавление" />
+        </div>
+    </form>
+    }
+    <h2>Друзья</h2>
+    <table width="60%">
+        @foreach (var i in Model)
+        {
+            foreach (var j in user.Where(x => x.Id == i.Sender))
+            {
+                <tr>
+                    <td>
+                        @if (j.Photo != null)
+                        {
+                            <img style='width:50px; height:50px; border-radius:35px;' src="data:image/jpeg;base64,@(Convert.ToBase64String(j.Photo))" />
+                        }
+                        else
+                        {
+                            <img style='width:50px; height:50px; border-radius:35px;' src="https://tib.tomsk.ru/upload/iblock/9bb/9bba32393645786f73bbc55c98aa138e.jpg" />
+
+                        }
+                    </td>
+                    <td align="center" width="100%">@j.Name </td>
+                    <td><a asp-action="Message" asp-controller="Messages" asp-route-id="@j.Id" asp-route-name="@j.Name" asp-route-Email="@j.Email" asp-route-photo="@j.Photo">Написать</a></td>
+                </tr>
+            }
+        }
+
+    </table>
+    </div>
+</center>

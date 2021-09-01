@@ -482,3 +482,5 @@ C:\Users\саша\Desktop\интенсив\probnik\probnik\obj\Debug\net5.0\Razo
 C:\Users\саша\Desktop\интенсив\probnik\probnik\obj\Debug\net5.0\Razor\Views\Messages\GroupMessage.cshtml.g.cs
 C:\Users\саша\Desktop\интенсив\probnik\probnik\obj\Debug\net5.0\Razor\Views\Messages\Message.cshtml.g.cs
 C:\Users\саша\Desktop\интенсив\probnik\probnik\obj\Debug\net5.0\Razor\Views\Messages\EditGroupChat.cshtml.g.cs
+C:\Users\саша\Desktop\интенсив\probnik\probnik\obj\Debug\net5.0\probnik.csproj.AssemblyReference.cache
+C:\Users\саша\Desktop\интенсив\probnik\probnik\obj\Debug\net5.0\Razor\Views\Home\Friends.cshtml.g.cs
