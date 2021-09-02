@@ -286,7 +286,7 @@ namespace probnik.Controllers
             var idd = User.FindFirstValue(ClaimTypes.NameIdentifier);
             ViewBag.Friends = db.Friends.Where(x=>x.Recipient==idd&&x.Confirmation=="false").ToList();
             ViewBag.User = db.Users.ToList();
-            return View(db.Friends.Where(x => x.Recipient == idd && x.Confirmation == "true").ToList());
+            return View(db.Friends.ToList());
         }
         [HttpPost]
         public async Task<IActionResult> addFriends(string sender,string recipient,string confirmation)

@@ -147,8 +147,14 @@ namespace probnik.Controllers
         }
         public async Task<IActionResult> AddGroupChat()
         {
+            var idd = User.FindFirstValue(ClaimTypes.NameIdentifier);
             var only = User.Identity.Name;
-            ViewBag.Users = db.Users.Where(x => x.Email != only && x.Email != "admin@mail.com").ToList();
+            var friends = db.Friends.Where(x => (x.Sender==idd || x.Recipient==idd)&&x.Confirmation=="true").ToList();
+            foreach(var i in friends)
+            {
+                ViewBag.Users = db.Users.Where(x => (x.Id ==i.Sender||x.Id==i.Recipient) && x.Email != only).ToList();
+            }
+            
             //ViewBag.CrUsers = db.Users.Where(x => x.Email == only||x.Email== "admin@mail.com").ToList();
             var Chat = db.AddGroupChat.ToList();
             if (Chat.Count() >= 1)
