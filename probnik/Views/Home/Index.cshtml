@@ -1,3 +1,39 @@
-﻿@{
-    ViewData["Title"] = "Index";
+﻿@using probnik.Controllers
+@using System.Security.Claims;
+@model FriendsModel
+@{
+    var idd = User.FindFirstValue(ClaimTypes.NameIdentifier);
 }
+<div class="container">
+    <div class="row">&nbsp;</div>
+    @foreach (var i in Model.User.Where(x => x.Email == User.Identity.Name))
+    {
+        <div class="row">
+            <div class="col-2">User</div>
+            <div class="col-4"><input type="text" value="@idd" id="userIdInput" /></div>
+        </div>
+    }
+
+    <div class="row">
+        <div class="col-2">Message</div>
+        <div class="col-4"><input type="text" id="messageInput" /></div>
+    </div>
+    <div class="row">&nbsp;</div>
+    <div class="row">
+        <div class="col-6">
+            <input type="button" id="sendButton" value="Send Message" />
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-12">
+        <hr />
+    </div>
+</div>
+<div class="row">
+    <div class="col-6">
+        <ul id="messagesList"></ul>
+    </div>
+</div>
+<script src="~/js/signalr/dist/browser/signalr.js"></script>
+<script src="~/js/chat.js"></script>

@@ -48,7 +48,7 @@ namespace probnik.Controllers
         {
             var id = User.FindFirstValue(ClaimTypes.NameIdentifier);
             var userName = User.Identity.Name;
-            var list = db.AddGroupChat.Where(x => x.userId == id && x.Name != null).ToList();
+            var list = db.AddGroupChat.ToList();
             var user = db.Users.ToList();
             //.Where(x => x.message != null)
 
@@ -57,9 +57,10 @@ namespace probnik.Controllers
                 AddGroupChats = list,
                 User = user
             };
+            ViewBag.Messages = db.Messages.ToList();
             //ViewBag.Users = db.Users.ToList();
             ViewBag.Photo = db.Messages.Select(x => x.Photo).ToList();
-            ViewBag.GroupChat = db.GroupChat.ToList();
+            ViewBag.AddGroupChat = db.AddGroupChat.Where(x => x.userId == id).ToList();
             return View(model);
         }
         [Authorize]
@@ -72,13 +73,14 @@ namespace probnik.Controllers
                     var only = User.Identity.Name;
                     var idd = User.FindFirstValue(ClaimTypes.NameIdentifier);
                     ViewBag.Message = db.Messages
-                        .Where(x => (x.id == id && x.Fromm == only) || (x.Fromm == Email && x.id == idd))
+                        
                         .OrderBy(x => x.Date)
                         .ToList();
                     ViewBag.Users = db.Users
                         .Where(x => x.Id == id)
                         .ToList();
                     ViewBag.Name = name;
+                ViewBag.Email = Email;
                     return View(messages);
             }
             return NotFound();
@@ -149,12 +151,17 @@ namespace probnik.Controllers
         {
             var idd = User.FindFirstValue(ClaimTypes.NameIdentifier);
             var only = User.Identity.Name;
-            var friends = db.Friends.Where(x => (x.Sender==idd || x.Recipient==idd)&&x.Confirmation=="true").ToList();
-            foreach(var i in friends)
-            {
-                ViewBag.Users = db.Users.Where(x => (x.Id ==i.Sender||x.Id==i.Recipient) && x.Email != only).ToList();
-            }
-            
+            ViewBag.Friends = db.Friends.Where(x => x.Sender == idd||x.Recipient==idd).ToList();
+            var friends= db.Friends.Where(x => x.Sender == idd || x.Recipient == idd).ToList();
+            int a = 0;
+            ViewBag.Users = db.Users.ToList();
+            //foreach (var i in friends) 
+            //{
+            //    ViewBag.Users = db.Users.Where(x => (x.Id == i.Sender || x.Id == i.Recipient) && x.Id != idd).ToList();
+            //}
+
+            //ViewBag.Users = db.Users.Include(x=>x.Friends).Where(x => (x.Friends.Recipient == idd && x.Id != idd || x.Friends.Sender == idd && x.Id != idd)).ToList();
+            //.Include(x=>x.Friends).Where(x => (x.Id == x.Friends.Sender || x.Id == x.Friends.Recipient) && x.Id != idd)
             //ViewBag.CrUsers = db.Users.Where(x => x.Email == only||x.Email== "admin@mail.com").ToList();
             var Chat = db.AddGroupChat.ToList();
             if (Chat.Count() >= 1)
@@ -184,6 +191,7 @@ namespace probnik.Controllers
                     // установка массива байтов
                     groupModels[0].Photo = imageData;
                 }
+                groupModels[0].Creator = groupModels[0].Creator;
                 groupModels[0].Name = NameGroup;
                 if (groupModels[i].userId != null)
                 {
@@ -203,7 +211,8 @@ namespace probnik.Controllers
                     ViewBag.GroupId = groupId;
                     ViewBag.UserId = groupId;
                     ViewBag.Users = db.Users.Where(x => x.AddGroupChats.GroupId == groupId).ToList();
-                    ViewBag.AddGroupChat = db.AddGroupChat.Where(x => x.GroupId == groupId).ToList();
+                    ViewBag.Userss = db.Users.ToList();
+                    ViewBag.AddGroupChat = db.AddGroupChat.Where(x => x.GroupId == groupId&& x.Creator != User.Identity.Name).ToList();
 
                     return View(addGroupChat);
                 }
@@ -226,6 +235,7 @@ namespace probnik.Controllers
                     // установка массива байтов
                     addGroupChat[0].Photo = imageData;
                 }
+                addGroupChat[0].Creator = addGroupChat[0].Creator;
                 addGroupChat[0].Name = NameGroup;
                 db.AddGroupChat.UpdateRange(addGroupChat[i]); ;
             }
@@ -241,7 +251,7 @@ namespace probnik.Controllers
 
                 ViewBag.GroupId = groupId;
                 ViewBag.Name = Name;
-                ViewBag.GroupChat = db.GroupChat.ToList();
+                ViewBag.GroupChat = db.GroupChat.Where(x => x.addGroupChatId == groupId).ToList();
                 ViewBag.AddGroupChat = db.AddGroupChat.Where(x => x.GroupId == groupId).ToList();
                 ViewBag.Users = db.Users.ToList();
                 return View();

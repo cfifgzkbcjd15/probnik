@@ -65,6 +65,21 @@ namespace probnik.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Friends",
+                columns: table => new
+                {
+                    id = table.Column<long>(type: "bigint", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    sender = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    recipient = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    confirmation = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Friends", x => x.id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Posts",
                 columns: table => new
                 {
@@ -235,28 +250,6 @@ namespace probnik.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Friends",
-                columns: table => new
-                {
-                    id = table.Column<long>(type: "bigint", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    sender = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    recipient = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    confirmation = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    userId = table.Column<string>(type: "nvarchar(450)", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Friends", x => x.id);
-                    table.ForeignKey(
-                        name: "FK_Friends_AspNetUsers_userId",
-                        column: x => x.userId,
-                        principalTable: "AspNetUsers",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "Messages",
                 columns: table => new
                 {
@@ -377,11 +370,6 @@ namespace probnik.Migrations
                 name: "IX_Comments_postId",
                 table: "Comments",
                 column: "postId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Friends_userId",
-                table: "Friends",
-                column: "userId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_GroupChat_addGroupChatId",

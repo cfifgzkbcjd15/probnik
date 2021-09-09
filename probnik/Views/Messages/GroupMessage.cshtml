@@ -13,6 +13,9 @@
     body {
         overflow: hidden;
     }
+    #scroll_div::-webkit-scrollbar {
+        width: 0;
+    }
 </style>
 <table align="center">
    
@@ -33,9 +36,12 @@
 <div id="scroll_div" style=" overflow: scroll;overflow-x:hidden; height: 332px">
     @if (groupChat != null)
     {
-        @foreach (var i in groupChat.Where(x=>x.addGroupChatId==groupId))
+        @foreach (var i in groupChat)
         {
-            <p align="center">@i.Date.ToString("dd MMMM")</p>
+            if (DateTime.Now.Day - i.Date.Day >= 1)
+            {
+                <p align="center">@i.Date.ToString("dd MMMM")</p>
+            }
             <p style="color: blue;">@i.Fromm @i.Date.ToString("HH:mm:ss")</p>
 
             <form asp-controller="Messages" asp-action="DeleteGroupMessage" method="post" asp-route-id="@i.Id">

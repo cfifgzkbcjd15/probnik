@@ -1,13 +1,15 @@
+@using probnik.Data;
 @using System.Security.Claims;
 @model probnik.Data.AddGroupChat
 @{
     ViewBag.Title = "Создание беседы";
-    var users = ViewBag.Users;
+    var users = ViewBag.Users as List<User>;
     //var crUsers = ViewBag.CrUsers;
     var only = User.Identity.Name;
-    var j = 0;
     var groupId = ViewBag.Chat;
     var idd = User.FindFirstValue(ClaimTypes.NameIdentifier);
+    var friends = ViewBag.Friends as List<Friends>;
+    var a = 0;
 }
 
 <form asp-action="AddGroupChat" asp-controller="messages" enctype="multipart/form-data">
@@ -18,20 +20,33 @@
     <input hidden type="text" name="groupModels[0].userId" value="@idd" class="form-control" />
     <input hidden value="@only" name="groupModels[0].Creator" class="form-control" />
     <input hidden name="groupModels[0].GroupId" value="@groupId" class="form-control" />
-    @for (int i = 0; i < users.Count; i++)
+    @foreach (var i in friends)
     {
-
-        <div>
-            <div class="form-group">
-                @*<label class="control-label">Название беседы</label>
-                    <input name="groupModels[@i].Name" class="form-control" />*@
-                <label class="control-label">@users[i].Name</label>
-                <input type="checkbox" name="groupModels[@i].userId" value="@users[i].Id" class="form-control" />
-                <input hidden name="groupModels[@i].Creator" class="form-control" />
-                <input hidden name="groupModels[@i].GroupId" value="@groupId" class="form-control" />
-            </div>
-        </div>
+        a += 1;
+        foreach (var j in users.Where(x => (x.Id == i.Sender || x.Id == i.Recipient) && x.Id != idd))
+        {
+            <label class="control-label">@j.Name</label>
+            <input type="checkbox" name="groupModels[@a].userId" value="@j.Id" class="form-control" />
+            <input hidden name="groupModels[@a].Creator" class="form-control" />
+            <input hidden name="groupModels[@a].GroupId" value="@groupId" class="form-control" />
+        }
     }
+
+    @*@for (var i = 0; i < users.Count; i++)
+        {
+            <div>
+
+                <div class="form-group">
+                    /*<label class="control-label">Название беседы</label>
+                        <input name="groupModels[@i].Name" class="form-control" />
+        */
+                    <label class="control-label">@users[i].Name</label>
+                    <input type="checkbox" name="groupModels[@i].userId" value="@users[i].Id" class="form-control" />
+                    <input hidden name="groupModels[@i].Creator" class="form-control" />
+                    <input hidden name="groupModels[@i].GroupId" value="@groupId" class="form-control" />
+                </div>
+            </div>
+        }*@
 
     <div class="form-group">
         <input type="submit" value="Отправить" class="btn btn-default" />

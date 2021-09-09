@@ -75,7 +75,8 @@ namespace probnik.Controllers
         }
         public IActionResult CreatePhotos()
         {
-            SelectList album = new SelectList(db.Albums.OrderByDescending(x => x.Id), "Id", "Title");
+            var idd = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            SelectList album = new SelectList(db.Albums.OrderByDescending(x => x.Id).Where(x=>x.UserId==idd), "Id", "Title");
             ViewBag.Album = album;
             return View();
         }

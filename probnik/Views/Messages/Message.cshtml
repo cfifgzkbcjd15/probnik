@@ -8,8 +8,9 @@
     var idd = User.FindFirstValue(ClaimTypes.NameIdentifier);
     var only = User.Identity.Name;
     var name = ViewBag.Name;
-            //Правильные сообщения
-            //@foreach (var i in message.Where(x => (x.id == mId && x.Fromm == only) || (x.Fromm == email && x.id == idd)).OrderBy(x => x.Date))
+    var Email = ViewBag.Email;
+    //Правильные сообщения
+    //@foreach (var i in message.Where(x => (x.id == mId && x.Fromm == only) || (x.Fromm == email && x.id == idd)).OrderBy(x => x.Date))
 }
 <style>
     body{
@@ -32,7 +33,7 @@
     @if (message != null)
     {
         <div id="scroll_div" style=" overflow: scroll;overflow-x:hidden; height: 332px">
-            @foreach (var i in message)
+            @foreach (var i in message.Where(x => (x.id == idd && x.Fromm == only) || (x.Fromm == Email && x.id == idd)))
             {
 
                 <p align="center">@i.Date.ToString("dd:MMMM")</p>
@@ -69,7 +70,7 @@
                 <input type="text" asp-for="id" class="form-control" />
             </div>
             <div class="form-group">
-                <label max="255" hidden asp-for="Message" class="control-label"></label>
+                <label  hidden asp-for="Message" class="control-label"></label>
 
                 <label class="upload-file__label" for="upload-file__input_1" asp-for="Photo">
                     <i class="fas fa-chevron-circle-up"></i>
@@ -94,7 +95,7 @@
                        accept=".mp4"
                        multiple>
 
-                <input type="text" asp-for="Message" value="" class="form-control" />
+                <input max="255" type="text" asp-for="Message" value="" class="form-control" />
             </div>
             <div hidden class="form-group">
                 <label asp-for="Fromm" class="control-label">От кого</label>

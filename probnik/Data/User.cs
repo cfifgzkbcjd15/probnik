@@ -13,5 +13,7 @@ namespace probnik.Data
         public Messages message { get; set; }
         public virtual AddGroupChat AddGroupChats { get; set; }
 
+
+
     }
 }

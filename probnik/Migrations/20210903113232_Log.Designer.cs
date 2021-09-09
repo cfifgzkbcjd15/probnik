@@ -10,7 +10,7 @@ using probnik.Models;
 namespace probnik.Migrations
 {
     [DbContext(typeof(ApplicationContext))]
-    [Migration("20210901105512_Log")]
+    [Migration("20210903113232_Log")]
     partial class Log
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -274,12 +274,7 @@ namespace probnik.Migrations
                         .HasColumnType("nvarchar(max)")
                         .HasColumnName("sender");
 
-                    b.Property<string>("userId")
-                        .HasColumnType("nvarchar(450)");
-
                     b.HasKey("Id");
-
-                    b.HasIndex("userId");
 
                     b.ToTable("Friends");
                 });
@@ -577,15 +572,6 @@ namespace probnik.Migrations
                         .IsRequired();
 
                     b.Navigation("Posts");
-                });
-
-            modelBuilder.Entity("probnik.Data.Friends", b =>
-                {
-                    b.HasOne("probnik.Data.User", "user")
-                        .WithMany()
-                        .HasForeignKey("userId");
-
-                    b.Navigation("user");
                 });
 
             modelBuilder.Entity("probnik.Data.GroupChat", b =>

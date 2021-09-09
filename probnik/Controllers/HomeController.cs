@@ -18,6 +18,12 @@ using System.Web.Helpers;
 
 namespace probnik.Controllers
 {
+    public class FriendsModel
+    {
+        public List<Friends> Friends { get; set; }
+        public List<User> User { get; set; }
+        public List<Messages> Message { get; set; }
+    }
     [Authorize]
     public class HomeController : Controller
     {
@@ -31,13 +37,21 @@ namespace probnik.Controllers
             db = context;
             _userManager = userManager;
         }
-
         public IActionResult Index()
         {
-            return View(db.Users.ToList());
+            var user = db.Users.ToList();
+            var message = db.Messages.ToList();
+            FriendsModel model = new FriendsModel()
+            {
+                User = user,
+                Message=message
+                
+            };
+            return View(model);
         }
+
         [Authorize]
-       
+
         [Authorize]
         public IActionResult GetUsers(string searchString)
         {
@@ -50,17 +64,18 @@ namespace probnik.Controllers
             ViewBag.Users = db.Messages.ToList();
             return View(source);
         }
-        
+
         public async Task<IActionResult> UserId(string? id, string Email)
         {
             if (id != null)
             {
-
+                ViewBag.Friends = db.Friends.ToList();
+                var userr = db.Users.ToList();
                 User user = await db.Users.FirstOrDefaultAsync(p => p.Id == id);
                 var idd = User.FindFirstValue(ClaimTypes.NameIdentifier);
                 ViewBag.Albums = db.Albums.Where(x => x.UserId == idd).ToList();
                 ViewBag.Photos = db.Photos.ToList();
-                ViewBag.Posts = db.Posts.Where(x => x.To == idd).ToList();
+                ViewBag.Posts = db.Posts.Where(x => x.To == id).ToList();
                 var list = db.Posts.Where(x => x.To == id).ToList();
                 ViewBag.Mid = id;
                 foreach (var i in list)
@@ -69,8 +84,8 @@ namespace probnik.Controllers
                 }
                 ViewBag.User = db.Users.Where(x => x.Email == User.Identity.Name).ToList();
                 ViewBag.UserId = db.Users.Where(x => x.Id == id).ToList();
-                if (user!=null)
-                return View();
+                if (user != null)
+                    return View();
             }
             return NotFound("Страница удалена");
         }
@@ -209,9 +224,10 @@ namespace probnik.Controllers
             var idd = User.FindFirstValue(ClaimTypes.NameIdentifier);
             ViewBag.Albums = db.Albums.Where(x => x.UserId == idd).ToList();
             ViewBag.Photos = db.Photos.ToList();
-            ViewBag.Posts = db.Posts.Where(x=>x.To == idd).ToList();
-            var list= db.Posts.Where(x => x.To == idd).ToList();
-            foreach (var i in list) {
+            ViewBag.Posts = db.Posts.Where(x => x.To == idd).ToList();
+            var list = db.Posts.Where(x => x.To == idd).ToList();
+            foreach (var i in list)
+            {
                 ViewBag.Comments = db.Comments.Where(x => x != null && x.postId == i.Id).ToList();
             }
             ViewBag.User = db.Users.Where(x => x.Email == User.Identity.Name).ToList();
@@ -284,14 +300,14 @@ namespace probnik.Controllers
         public IActionResult Friends()
         {
             var idd = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            ViewBag.Friends = db.Friends.Where(x=>x.Recipient==idd&&x.Confirmation=="false").ToList();
+            ViewBag.Friends = db.Friends.Where(x => x.Recipient == idd && x.Confirmation == "false").ToList();
             ViewBag.User = db.Users.ToList();
             return View(db.Friends.ToList());
         }
         [HttpPost]
-        public async Task<IActionResult> addFriends(string sender,string recipient,string confirmation)
+        public async Task<IActionResult> addFriends(string sender, string recipient, string confirmation)
         {
-            Friends friends = new Friends() {Sender = sender, Recipient = recipient,Confirmation=confirmation };
+            Friends friends = new Friends() { Sender = sender, Recipient = recipient, Confirmation = confirmation };
             db.Friends.Add(friends);
             await db.SaveChangesAsync();
             return RedirectToAction("Index");
@@ -305,7 +321,7 @@ namespace probnik.Controllers
             return RedirectToAction("Index");
         }
         [HttpPost]
-        public async Task<IActionResult> reject_addition(long?id)
+        public async Task<IActionResult> reject_addition(long? id)
         {
             if (id != null)
             {
