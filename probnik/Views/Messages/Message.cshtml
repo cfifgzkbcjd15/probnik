@@ -33,7 +33,7 @@
     @if (message != null)
     {
         <div id="scroll_div" style=" overflow: scroll;overflow-x:hidden; height: 332px">
-            @foreach (var i in message.Where(x => (x.id == idd && x.Fromm == only) || (x.Fromm == Email && x.id == idd)))
+            @foreach (var i in message)
             {
 
                 <p align="center">@i.Date.ToString("dd:MMMM")</p>

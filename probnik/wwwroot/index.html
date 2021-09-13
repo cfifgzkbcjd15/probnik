@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width" />
+    <title>Список пользователей</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.0/css/bootstrap.min.css" rel="stylesheet" />
+</head>
+<body>
+    <h2>Список пользователей</h2>
+    <div id="errors" class="alert alert-danger" style="display:none;"></div>
+    <form name="messagesForm">
+        <input type="hidden" name="id" value="0" />
+        <div class="form-group col-md-5">
+            <label for="id">userId</label>
+            <input class="form-control" name="id" />
+        </div>
+        <div class="form-group col-md-5">
+            <label for="from">From</label>
+            <input class="form-control" name="from" />
+        </div>
+        <div class="panel-body">
+            <button type="submit" id="submit" class="btn btn-primary">Сохранить</button>
+            <a id="reset" class="btn btn-primary">Сбросить</a>
+        </div>
+    </form>
+    <table class="table table-condensed table-striped  col-md-6">
+        <thead><tr><th>Id</th><th>Имя</th><th>возраст</th><th></th></tr></thead>
+        <tbody>
+        </tbody>
+    </table>
+    <script>
+        // Получение всех пользователей
+        async function GetMessagesApi() {
+            // отправляет запрос и получаем ответ
+            const response = await fetch("/probnik/messagesApi", {
+                method: "GET",
+                headers: { "Accept": "application/json" }
+            });
+            // если запрос прошел нормально
+            if (response.ok === true) {
+                // получаем данные
+                const messagesApi = await response.json();
+                let rows = document.querySelector("tbody");
+                messagesApi.forEach(messages => {
+                    // добавляем полученные элементы в таблицу
+                    rows.append(row(messages));
+                });
+            }
+        }
+        // Получение одного пользователя
+        async function GetMessagesApi(id) {
+            const response = await fetch("/probnik/messagesApi/" + prostoId, {
+                method: "GET",
+                headers: { "Accept": "application/json" }
+            });
+            if (response.ok === true) {
+                const messages = await response.json();
+                const form = document.forms["messagesForm"];
+                form.elements["prostoId"].value = messages.id;
+                form.elements["id"].value = messages.name;
+                form.elements["from"].value = messages.age;
+            }
+        }
+        // Добавление пользователя
+        async function CreateMessagesApi(id, from) {
+
+            const response = await fetch("probnik/messagesApi", {
+                method: "POST",
+                headers: { "Accept": "application/json", "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    id: userId,
+                    from: from
+                })
+            });
+            if (response.ok === true) {
+                const messages = await response.json();
+                reset();
+                document.querySelector("tbody").append(row(messages));
+            }
+            //else {
+            //    const errorData = await response.json();
+            //    console.log("errors", errorData);
+            //    if (errorData) {
+            //        // ошибки вследствие валидации по атрибутам
+            //        if (errorData.errors) {
+            //            if (errorData.errors["Name"]) {
+            //                addError(errorData.errors["Name"]);
+            //            }
+            //            if (errorData.errors["Age"]) {
+            //                addError(errorData.errors["Age"]);
+            //            }
+            //        }
+            //        // кастомные ошибки, определенные в контроллере
+            //        // добавляем ошибки свойства Name
+            //        if (errorData["Name"]) {
+            //            addError(errorData["Name"]);
+            //        }
+
+            //        // добавляем ошибки свойства Age
+            //        if (errorData["Age"]) {
+            //            addError(errorData["Age"]);
+            //        }
+            //    }
+
+            //    document.getElementById("errors").style.display = "block";
+            //}
+        }
+        // Изменение пользователя
+        async function EditMessagesApi(messagesId, messagesName, messagesAge) {
+            const response = await fetch("probnik/messagesApi", {
+                method: "PUT",
+                headers: { "Accept": "application/json", "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    id: parseInt(messagesId, 10),
+                    name: messagesName,
+                    age: parseInt(messagesAge, 10)
+                })
+            });
+            if (response.ok === true) {
+                const messages = await response.json();
+                reset();
+                document.querySelector("tr[data-rowid='" + messages.id + "']").replaceWith(row(messages));
+            }
+        }
+        // Удаление пользователя
+        async function DeleteMessagesApi(id) {
+            const response = await fetch("/probnik/messagesApi/" + id, {
+                method: "DELETE",
+                headers: { "Accept": "application/json" }
+            });
+            if (response.ok === true) {
+                const messages = await response.json();
+                document.querySelector("tr[data-rowid='" + messages.id + "']").remove();
+            }
+        }
+
+        // сброс формы
+        function reset() {
+            const form = document.forms["messagesForm"];
+            form.reset();
+            form.elements["id"].value = 0;
+        }
+        function addError(errors) {
+            errors.forEach(error => {
+                const p = document.createElement("p");
+                p.append(error);
+                document.getElementById("errors").append(p);
+            });
+        }
+        // создание строки для таблицы
+        function row(messages) {
+
+            const tr = document.createElement("tr");
+            tr.setAttribute("data-rowid", messages.id);
+
+            const idTd = document.createElement("td");
+            idTd.append(messages.id);
+            tr.append(idTd);
+
+            const nameTd = document.createElement("td");
+            nameTd.append(messages.name);
+            tr.append(nameTd);
+
+            const ageTd = document.createElement("td");
+            ageTd.append(messages.age);
+            tr.append(ageTd);
+
+            const linksTd = document.createElement("td");
+
+            const editLink = document.createElement("a");
+            editLink.setAttribute("data-id", messages.id);
+            editLink.setAttribute("style", "cursor:pointer;padding:15px;");
+            editLink.append("Изменить");
+            editLink.addEventListener("click", e => {
+
+                e.preventDefault();
+                GetMessagesApi(messages.id);
+            });
+            linksTd.append(editLink);
+
+            const removeLink = document.createElement("a");
+            removeLink.setAttribute("data-id", messages.id);
+            removeLink.setAttribute("style", "cursor:pointer;padding:15px;");
+            removeLink.append("Удалить");
+            removeLink.addEventListener("click", e => {
+
+                e.preventDefault();
+                DeleteMessagesApi(messages.id);
+            });
+
+            linksTd.append(removeLink);
+            tr.appendChild(linksTd);
+
+            return tr;
+        }
+        // сброс значений формы
+        document.getElementById("reset").addEventListener("click", function (e) {
+
+            e.preventDefault();
+            reset();
+        })
+
+        // отправка формы
+        document.forms["messagesForm"].addEventListener("submit", e => {
+            e.preventDefault();
+            document.getElementById("errors").innerHTML = "";
+            document.getElementById("errors").style.display = "none";
+
+            const form = document.forms["messagesForm"];
+            const id = form.elements["id"].value;
+            const name = form.elements["name"].value;
+            const age = form.elements["age"].value;
+            if (id == 0)
+                CreateMessagesApi(name, age);
+            else
+                EditMessagesApi(id, name, age);
+        });
+
+        // загрузка пользователей
+        GetMessagesApi();
+
+    </script>
+    </body>
+</html>

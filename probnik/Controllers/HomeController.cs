@@ -39,6 +39,7 @@ namespace probnik.Controllers
         }
         public IActionResult Index()
         {
+            ViewBag.Messages= db.Messages.ToList();
             var user = db.Users.ToList();
             var message = db.Messages.ToList();
             FriendsModel model = new FriendsModel()

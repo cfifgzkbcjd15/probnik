@@ -44,7 +44,7 @@ namespace probnik.Controllers
             _roleManager = roleManager;
         }
 
-        public async Task<IActionResult> Index()
+        public IActionResult Index()
         {
             var id = User.FindFirstValue(ClaimTypes.NameIdentifier);
             var userName = User.Identity.Name;
@@ -73,7 +73,7 @@ namespace probnik.Controllers
                     var only = User.Identity.Name;
                     var idd = User.FindFirstValue(ClaimTypes.NameIdentifier);
                     ViewBag.Message = db.Messages
-                        
+                        .Where(x => (x.id == id && x.Fromm == only) || (x.Fromm == Email && x.id == idd))
                         .OrderBy(x => x.Date)
                         .ToList();
                     ViewBag.Users = db.Users
@@ -81,7 +81,7 @@ namespace probnik.Controllers
                         .ToList();
                     ViewBag.Name = name;
                 ViewBag.Email = Email;
-                    return View(messages);
+                    return View();
             }
             return NotFound();
 
