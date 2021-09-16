@@ -5,113 +5,167 @@
     ViewBag.Title = "Сообщение";
     var message = ViewBag.Message as List<Messages>;
     var users = ViewBag.Users as List<User>;
-    var idd = User.FindFirstValue(ClaimTypes.NameIdentifier);
+    //var idd = User.FindFirstValue(ClaimTypes.NameIdentifier);
     var only = User.Identity.Name;
     var name = ViewBag.Name;
     var Email = ViewBag.Email;
+    var mId = ViewBag.Mid;
     //Правильные сообщения
     //@foreach (var i in message.Where(x => (x.id == mId && x.Fromm == only) || (x.Fromm == email && x.id == idd)).OrderBy(x => x.Date))
 }
 <style>
-    body{
-        overflow:hidden;
+    body {
+        overflow: hidden;
+    }
+
+    .alignleft {
+        float: left;
+    }
+
+    .alignright {
+        float: right;
+    }
+
+    .scroll_div::-webkit-scrollbar {
+        width: 0;
     }
 </style>
-<div>
 
-    @foreach (var i in users)
+@foreach (var i in users)
+{
+    @if (i.Photo != null)
     {
-        @if (i.Photo != null)
-        {
-            <p align="center"><img style='width: 60px; height: 60px; border-radius: 35px;' src="data:image/jpeg;base64,@(Convert.ToBase64String(i.Photo))" /> @name</p>
-        }
-        else
-        {
-            <p align="center"><img style='width:80px; height:60px;' src="https://cdn.pixabay.com/photo/2012/04/26/19/43/profile-42914_1280.png" /> @name</p>
-        }
+        <p align="center"><img style='width: 60px; height: 60px; border-radius: 35px;' src="data:image/jpeg;base64,@(Convert.ToBase64String(i.Photo))" /> @name</p>
     }
-    @if (message != null)
+    else
     {
-        <div id="scroll_div" style=" overflow: scroll;overflow-x:hidden; height: 332px">
-            @foreach (var i in message)
-            {
-
-                <p align="center">@i.Date.ToString("dd:MMMM")</p>
-                <div>
-                    <p style="color: blue;">@i.Fromm @i.Date.ToString("HH:mm:ss")</p>
-
-                    <form asp-controller="Messages" asp-action="DeleteMessage" method="post" asp-route-id="@i.id">
-                        <div class="form-group">
-
-                            <p>@i.Message</p>
-                            @if (i.Photo != null)
-                            {
-                                <img style='width:80px; height:60px;' src="data:image/jpeg;base64,@(Convert.ToBase64String(i.Photo))" />
-                            }
-                            @if (i.Video != null)
-                            {
-                                <video controls width="300px" height="250px" src="data:video/mp4;base64,@(Convert.ToBase64String(i.Video))"></video>
-                            }
-                            @if (i.Fromm == only)
-                            {
-                                <p align="center">
-                                    <input type="submit" class="btn btn-default" value="Удалить" />
-                                </p>
-                            }
-                        </div>
-                    </form>
-                </div>
-            }
+        <p align="center"><img style='width: 60px; height: 60px; border-radius: 35px;' src="https://cdn.pixabay.com/photo/2012/04/26/19/43/profile-42914_1280.png" /> @name</p>
+    }
+}
+    <h2 align="center">Сообщения</h2>
+        <div class="scroll_div" id="mydiv" style=" overflow: scroll;overflow-x:hidden; height: 332px;background:white;">
+            <table height: 332px; width="100%" id="tblMessages" class="">
+                <tbody></tbody>
+            </table>
         </div>
-    }
-        <form style="border: 3px #d4d4f1 solid;" asp-action="Message" asp-controller="Messages" enctype="multipart/form-data">
-            <div hidden class="form-group">
-                <label asp-for="id" class="control-label"></label>
-                <input type="text" asp-for="id" class="form-control" />
-            </div>
-            <div class="form-group">
-                <label  hidden asp-for="Message" class="control-label"></label>
-
-                <label class="upload-file__label" for="upload-file__input_1" asp-for="Photo">
-                    <i class="fas fa-chevron-circle-up"></i>
-                </label>
-
-                <input hidden
-                       asp-for="Photo"
-                       type="file"
-                       id="upload-file__input_1"
-                       class="form-control"
-                       accept=".jpg, .jpeg, .png, .gif, .bmp, .doc, .docx, .xls, .xlsx, .txt, .tar, .zip, .7z, .7zip"
-                       multiple>
-
-                <label class="upload-file__label" for="upload-file__input_2" asp-for="Video">
-                    <i class="fas fa-video"></i>
-                </label>
-                <input hidden
-                       asp-for="Video"
-                       type="file"
-                       id="upload-file__input_2"
-                       class="form-control"
-                       accept=".mp4"
-                       multiple>
-
-                <input max="255" type="text" asp-for="Message" value="" class="form-control" />
-            </div>
-            <div hidden class="form-group">
-                <label asp-for="Fromm" class="control-label">От кого</label>
-                <input type="text" asp-for="Fromm" value="@User.Identity.Name" class="form-control" />
-            </div>
-            <div hidden class="form-group">
-                <label asp-for="Date" class="control-label">Дата</label>
-                <input type="text" asp-for="Date" value="@DateTime.Now" class="form-control" />
-            </div>
-            <div class="form-group">
-                <input type="submit" value="Отправить" class="btn btn-default" />
-            </div>
-        </form>
+</br>
+    <div class="form-group col-md-5">
+        <input hidden type="text" id="addId" value="@mId" class="form-control" required="" />
     </div>
-        <script>
-            var scrollDiv = document.getElementById("scroll_div");
-            scrollDiv.scrollTo(0, scrollDiv.scrollHeight);
-        </script>
-        <link rel="stylesheet" href="~/css/photo.css" />
+
+    <div class="form-group col-md-5">
+        <input hidden type="text" id="addFromm" value="@only" class="form-control" required="" />
+    </div>
+    <div class="form-group col-md-5">
+        <input hidden id="addDate" class="form-control" value="@DateTime.Now" required="" />
+    </div>
+    @*<div class="form-group col-md-5">
+            <input type="file" id="addPhoto" class="form-control" required="" />
+        </div>*@
+<div style="width: 100%; height: 70px;">
+    <input type="text" style="width: 80%; border-radius: 5px;" id="addMessage" class="alignleft" placeholder="Введите сообщение" required="" />
+    @*<input  id="addPhoto" class="form-control" type="file" required="" />*@
+    <input  class="alignright" id="btnSave" value="Save" type="button">
+</div>
+
+<link rel="stylesheet" href="~/css/photo.css" />
+@section Scripts
+{
+    <script type="text/javascript">
+
+       //setInterval(function () {
+       //     $('#time').load('Message.cshtml #time');
+       // }, 3000);
+        $(function  () {
+            LoadData();
+            $("#btnSave").click(function () {
+                $.ajax({
+                    type: "POST",
+                    url: '@Url.Action("sendMessages")',
+                    data: {
+                        id: $("#addId").val(),
+                        message: $("#addMessage").val(),
+                        fromm: $("#addFromm").val(),
+                        date: $("#addDate").val()
+                        //photo: $("#addPhoto").val()
+                    },
+                    
+                    success: function (data) {
+                        LoadData();
+
+                    }
+                });
+                return false;
+            });
+        });
+        //////setInterval(LoadData, 7500);
+
+        //Вывод
+        function LoadData() {
+
+        $("#tblMessages tbody tr").remove();
+        $.ajax({
+            type: 'Get',
+            url: '@Url.Action("getMessages")',
+            dataType: 'json',
+            data: { idd: '' },
+            success: function (data) {
+                var items = '';
+                $.each(data, function (i, item) {
+                        var rows =
+                            "<tr>"
+                            + "<td style='border: 2px solid white;'>"
+                            + "<div style='background-color: rgba(128, 128, 255,0.3);'>"
+                            + "<p class='alignleft' >" + item.fromm + "</p>"
+                            + "<p class='alignright' >" + item.date + "</p>" + "</br>"
+                            + "</div>"
+                            + "<p align='left' style='margin:20px;' >" + item.message + "</p>"
+                            + "</td>"
+                            + "</tr>";
+                    $('#tblMessages tbody').append(rows);
+                    $("#mydiv").scrollTop($("#mydiv")[0].scrollHeight);
+
+
+                });
+            }
+        });
+        return false;
+        }
+
+        /*setTimeout(, 5000);*/
+        //setTimeout(function () {
+        //document.getElementById("time").location.reload(1);
+        //}, 5000);
+       //
+        //setTimeout(function () {
+        //    window.location.reload(1);
+        //}, 3000);
+
+        //$('#time').click(function () {
+        //    location.reload();
+        //});
+
+        ////вывод с конца
+        //var scrollDiv = document.getElementById("scroll_div");
+        //scrollDiv.scrollTo(0, scrollDiv.scrollHeight);
+        ////
+    </script>
+}
+
+<script src="~/lib/jquery/dist/jquery.js"></script>
+<script src="~/lib/jquery-unobtrusive-ajax/jquery.unobtrusive-ajax.min.js"></script>
+@*<p>@i.Message</p>
+    @if (i.Photo != null)
+    {
+        <img style='width:80px; height:60px;' src="data:image/jpeg;base64,@(Convert.ToBase64String(i.Photo))" />
+    }
+    @if (i.Video != null)
+    {
+        <video controls width="300px" height="250px" src="data:video/mp4;base64,@(Convert.ToBase64String(i.Video))"></video>
+    }
+    @if (i.Fromm == only)
+    {
+        <p align="center">
+            <input type="submit" class="btn btn-default" value="Удалить" />
+        </p>
+    }*@

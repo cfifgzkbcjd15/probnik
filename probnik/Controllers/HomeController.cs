@@ -39,19 +39,8 @@ namespace probnik.Controllers
         }
         public IActionResult Index()
         {
-            ViewBag.Messages= db.Messages.ToList();
-            var user = db.Users.ToList();
-            var message = db.Messages.ToList();
-            FriendsModel model = new FriendsModel()
-            {
-                User = user,
-                Message=message
-                
-            };
-            return View(model);
+            return View();
         }
-
-        [Authorize]
 
         [Authorize]
         public IActionResult GetUsers(string searchString)
@@ -131,7 +120,7 @@ namespace probnik.Controllers
                 db.Comments.Add(comment);
             }
             await db.SaveChangesAsync();
-            return RedirectToAction("Index");
+            return RedirectToAction("UserId");
         }
         public IActionResult CreatePosts(string? id)
         {
@@ -181,7 +170,7 @@ namespace probnik.Controllers
             }
             db.Posts.Add(posts);
             await db.SaveChangesAsync();
-            return RedirectToAction("Index");
+            return RedirectToAction("LichnKab");
         }
         [HttpPost]
         public async Task<IActionResult> DeletePosts(int? id)
@@ -200,7 +189,7 @@ namespace probnik.Controllers
                     }
                     db.Posts.Remove(posts);
                     await db.SaveChangesAsync();
-                    return RedirectToAction("Index");
+                    return RedirectToAction("LichnKab");
                 }
             }
             return NotFound();
@@ -227,13 +216,34 @@ namespace probnik.Controllers
             ViewBag.Photos = db.Photos.ToList();
             ViewBag.Posts = db.Posts.Where(x => x.To == idd).ToList();
             var list = db.Posts.Where(x => x.To == idd).ToList();
-            foreach (var i in list)
-            {
-                ViewBag.Comments = db.Comments.Where(x => x != null && x.postId == i.Id).ToList();
-            }
+            //foreach (var i in list)
+            //{
+            //    ViewBag.Comments = db.Comments.Where(x => x != null && x.postId == i.Id).ToList();
+            //}
+            ViewBag.Comments = db.Comments.ToList();
             ViewBag.User = db.Users.Where(x => x.Email == User.Identity.Name).ToList();
             return View();
         }
+        //public async Task<ActionResult> sendComments(Comments cms)
+        //{
+        //    if (cms.Body != null)
+        //    {
+        //        db.Comments.Add(cms);
+        //    }
+        //    db.SaveChanges();
+        //    string messagee = "SUCCESS";
+
+        //    return Json(new { Messagee = messagee, System.Web.Mvc.JsonRequestBehavior.AllowGet });
+
+        //}
+        //public JsonResult getComments(string id)
+        //{
+        //    var idd = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        //    List<Comments> comments = new List<Comments>();
+        //    comments = db.Comments.Where(x=>x.Posts.UserId==idd).ToList();
+
+        //    return Json(comments);
+        //}
         [HttpPost]
         public async Task<IActionResult> LichnKab(Comments comments)
         {
@@ -242,7 +252,7 @@ namespace probnik.Controllers
                 db.Comments.Add(comments);
             }
             await db.SaveChangesAsync();
-            return RedirectToAction("Index");
+            return RedirectToAction("LichnKab");
         }
         public async Task<IActionResult> EditUser(string id, EdUserViewModel evm)
         {

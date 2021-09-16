@@ -1,7 +1,9 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.SignalR;
 using Newtonsoft.Json;
 using probnik.Data;
+using probnik.Hubs;
 using probnik.Models;
 using System;
 using System.Collections.Generic;
@@ -12,10 +14,11 @@ namespace probnik.Controllers
 {
     public class MesController : Controller
     {
-        
+        private readonly IHubContext<ChatHub> hC;
         private ApplicationContext db;
-        public MesController(ApplicationContext context)
+        public MesController(ApplicationContext context, IHubContext<ChatHub> hubContext)
         {
+            hC = hubContext;
             db = context;
 
         }
@@ -24,12 +27,10 @@ namespace probnik.Controllers
             return View();
         }
         [HttpPost]
-        public ActionResult sendMessages(Messages msg)
+        public async Task sendMessages(Messages msg,string age)
         {
-            db.Messages.Add(msg);
-            db.SaveChanges();
-            string mes = "SUCCESS";
-            return Json(new { Message = mes, System.Web.Mvc.JsonRequestBehavior.AllowGet });
+
+            await hC.Clients.All.SendAsync(age);
         }
         public JsonResult getMessages(string idd)
         {

@@ -16,6 +16,9 @@ using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using System.Web.Helpers;
+using probnik.Hubs;
+using Microsoft.AspNetCore.SignalR;
+using Microsoft.AspNetCore.Routing;
 
 namespace probnik.Controllers
 {
@@ -31,13 +34,16 @@ namespace probnik.Controllers
     [Authorize]
     public class MessagesController : Controller
     {
+
+        private readonly IHubContext<ChatHub> hC;
         private ApplicationContext db;
         private readonly ILogger<MessagesController> _logger;
         UserManager<User> _userManager;
         RoleManager<IdentityRole> _roleManager;
 
-        public MessagesController(ILogger<MessagesController> logger, ApplicationContext context, UserManager<User> userManager, RoleManager<IdentityRole> roleManager)
+        public MessagesController(ILogger<MessagesController> logger, ApplicationContext context, UserManager<User> userManager, RoleManager<IdentityRole> roleManager, IHubContext<ChatHub> hubContext)
         {
+            hC = hubContext;
             _logger = logger;
             db = context;
             _userManager = userManager;
@@ -57,103 +63,130 @@ namespace probnik.Controllers
                 AddGroupChats = list,
                 User = user
             };
-            ViewBag.Messages = db.Messages.ToList();
+            ViewBag.Messages = db.Messages.Where(x => x.Fromm == userName || x.id == id).ToList();
             //ViewBag.Users = db.Users.ToList();
             ViewBag.Photo = db.Messages.Select(x => x.Photo).ToList();
             ViewBag.AddGroupChat = db.AddGroupChat.Where(x => x.userId == id).ToList();
+            ViewBag.GroupChat = db.GroupChat.ToList();
             return View(model);
         }
+
         [Authorize]
-        public async Task<IActionResult> Message(string id, string name, string Email, byte[] photo)
+        public async Task<IActionResult> Message( string id, string name, string Email, byte[] photo)
         {
+            
             if (id != null)
             {
                 Messages messages = await db.Messages
                     .FirstOrDefaultAsync(p => p.id == id && p.user.Name == name && p.user.Email == Email && p.user.Photo == photo);
-                    var only = User.Identity.Name;
-                    var idd = User.FindFirstValue(ClaimTypes.NameIdentifier);
-                    ViewBag.Message = db.Messages
-                        .Where(x => (x.id == id && x.Fromm == only) || (x.Fromm == Email && x.id == idd))
-                        .OrderBy(x => x.Date)
-                        .ToList();
-                    ViewBag.Users = db.Users
-                        .Where(x => x.Id == id)
-                        .ToList();
-                    ViewBag.Name = name;
+                var only = User.Identity.Name;
+                var idd = User.FindFirstValue(ClaimTypes.NameIdentifier);
+                //ViewBag.Message = db.Messages
+                //    .Where(x => (x.id == id && x.Fromm == only) || (x.Fromm == Email && x.id == idd))
+                //    .OrderBy(x => x.Date)
+                //    .ToList();
+                ViewBag.Users = db.Users
+                    .Where(x => x.Id == id)
+                    .ToList();
+                ViewBag.Name = name;
                 ViewBag.Email = Email;
-                    return View();
+                ViewBag.Mid = id;
+                //getMessages(id, Email);
+                return View();
+                
             }
             return NotFound();
 
         }
         [HttpPost]
-        public async Task<IActionResult> Message(Messages messages, MessagesViewModel mvm)
+        public async Task<ActionResult> sendMessages(Messages msg)
         {
-            if (mvm.Photo != null)
+            
+            if (msg.Message != null)
             {
-                byte[] imageData = null;
-                // считываем переданный файл в массив байтов
-                using (var binaryReader = new BinaryReader(mvm.Photo.OpenReadStream()))
-                {
-                    imageData = binaryReader.ReadBytes((int)mvm.Photo.Length);
-                }
-                // установка массива байтов
-                messages.Photo = imageData;
+                db.Messages.Add(msg);
             }
-            if (mvm.Video != null)
-            {
-                byte[] imageData = null;
-                // считываем переданный файл в массив байтов
-                using (var binaryReader = new BinaryReader(mvm.Video.OpenReadStream()))
-                {
-                    imageData = binaryReader.ReadBytes((int)mvm.Video.Length);
-                }
-                // установка массива байтов
-                messages.Video = imageData;
-            }
-
-            db.Messages.Add(messages);
             await db.SaveChangesAsync();
-            return RedirectToAction("Index");
-        }
-        [HttpPost]
-        public async Task<IActionResult> EditMessages(int? id)
-        {
-            if (id != null)
-            {
-                Messages messages = await db.Messages.FirstOrDefaultAsync(p => p.ProstoId == id);
-                if (messages != null)
-                {
-                    db.Messages.Update(messages);
-                    await db.SaveChangesAsync();
-                    return RedirectToAction("Index");
-                }
-            }
-            return NotFound();
-        }
+            string messagee = "SUCCESS";
+            return Json(new { Messagee = messagee, System.Web.Mvc.JsonRequestBehavior.AllowGet });
 
-        [HttpPost]
-        public async Task<IActionResult> DeleteMessage(string? id)
-        {
-            if (id != null)
-            {
-                Messages message = await db.Messages.FirstOrDefaultAsync(p => p.id == id);
-                if (message != null)
-                {
-                    db.Messages.Remove(message);
-                    await db.SaveChangesAsync();
-                    return RedirectToAction("Message");
-                }
-            }
-            return NotFound();
         }
+        public  JsonResult getMessages(string id,string Email)
+        {
+            string idd;
+            var only = User.Identity.Name;
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            List<Messages> messages = new List<Messages>();
+            messages = db.Messages.ToList();
+            return Json(messages);
+        }
+        //[HttpPost]
+        //public async Task<IActionResult> Message(Messages messages, MessagesViewModel mvm)
+        //{
+        //    if (mvm.Photo != null)
+        //    {
+        //        byte[] imageData = null;
+        //        // считываем переданный файл в массив байтов
+        //        using (var binaryReader = new BinaryReader(mvm.Photo.OpenReadStream()))
+        //        {
+        //            imageData = binaryReader.ReadBytes((int)mvm.Photo.Length);
+        //        }
+        //        // установка массива байтов
+        //        messages.Photo = imageData;
+        //    }
+        //    if (mvm.Video != null)
+        //    {
+        //        byte[] imageData = null;
+        //        // считываем переданный файл в массив байтов
+        //        using (var binaryReader = new BinaryReader(mvm.Video.OpenReadStream()))
+        //        {
+        //            imageData = binaryReader.ReadBytes((int)mvm.Video.Length);
+        //        }
+        //        // установка массива байтов
+        //        messages.Video = imageData;
+        //    }
+
+        //    db.Messages.Add(messages);
+        //    await db.SaveChangesAsync();
+        //    return RedirectToAction("Index");
+        //}
+        //[HttpPost]
+        //public async Task<IActionResult> EditMessages(int? id)
+        //{
+        //    if (id != null)
+        //    {
+        //        Messages messages = await db.Messages.FirstOrDefaultAsync(p => p.ProstoId == id);
+        //        if (messages != null)
+        //        {
+        //            db.Messages.Update(messages);
+        //            await db.SaveChangesAsync();
+        //            return RedirectToAction("Index");
+        //        }
+        //    }
+        //    return NotFound();
+        //}
+
+        //[HttpPost]
+        //public async Task<IActionResult> DeleteMessage(string? id)
+        //{
+        //    if (id != null)
+        //    {
+        //        Messages message = await db.Messages.FirstOrDefaultAsync(p => p.id == id);
+        //        if (message != null)
+        //        {
+        //            db.Messages.Remove(message);
+        //            await db.SaveChangesAsync();
+        //            return RedirectToAction("Message");
+        //        }
+        //    }
+        //    return NotFound();
+        //}
         public async Task<IActionResult> AddGroupChat()
         {
             var idd = User.FindFirstValue(ClaimTypes.NameIdentifier);
             var only = User.Identity.Name;
             ViewBag.Friends = db.Friends.Where(x => x.Sender == idd||x.Recipient==idd).ToList();
             var friends= db.Friends.Where(x => x.Sender == idd || x.Recipient == idd).ToList();
-            int a = 0;
             ViewBag.Users = db.Users.ToList();
             //foreach (var i in friends) 
             //{

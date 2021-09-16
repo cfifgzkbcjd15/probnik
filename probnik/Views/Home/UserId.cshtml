@@ -63,6 +63,8 @@
         <a asp-action="UsersAlbums" asp-controller="albums" asp-route-userId="@mid">Альбом</a>
     }
     <br />
+    @foreach(var i in friends.Where(x=>x.Sender!=idd&&x.Recipient!=mid))
+    {
             <form asp-action="AddFriends" asp-controller="home">
                 <input hidden name="sender" value="@idd" />
                 <input hidden name="recipient" value="@mid" />
@@ -71,6 +73,7 @@
                     <input type="submit" value="Добавить в друзья" class="btn btn-default" />
                 </div>
             </form>
+    }
 
     @foreach (var i in albums)
     {
