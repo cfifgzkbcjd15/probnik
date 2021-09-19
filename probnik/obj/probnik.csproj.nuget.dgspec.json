@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "D:\\Desktop\\интенсив\\probnik\\probnik\\probnik.csproj": {}
+    "D:\\Desktop\\моя прелесть\\probnik\\probnik.csproj": {}
   },
   "projects": {
-    "D:\\Desktop\\интенсив\\probnik\\probnik\\probnik.csproj": {
+    "D:\\Desktop\\моя прелесть\\probnik\\probnik.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "D:\\Desktop\\интенсив\\probnik\\probnik\\probnik.csproj",
+        "projectUniqueName": "D:\\Desktop\\моя прелесть\\probnik\\probnik.csproj",
         "projectName": "probnik",
-        "projectPath": "D:\\Desktop\\интенсив\\probnik\\probnik\\probnik.csproj",
+        "projectPath": "D:\\Desktop\\моя прелесть\\probnik\\probnik.csproj",
         "packagesPath": "C:\\Users\\cfifg\\.nuget\\packages\\",
-        "outputPath": "D:\\Desktop\\интенсив\\probnik\\probnik\\obj\\",
+        "outputPath": "D:\\Desktop\\моя прелесть\\probnik\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\cfifg\\AppData\\Roaming\\NuGet\\NuGet.Config",

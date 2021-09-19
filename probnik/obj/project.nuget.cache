@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "7rwugEJ9nD0oRlpF+TDEZmzvLChglSlZMgSJxg+hRw/3Yg68NI7Duye3thzjUx8AH4bdgggNhs/IPpYCDIp7FQ==",
+  "dgSpecHash": "kiOMnMbqctbCXanhRjzA661KJ6as4ZuQM6oIeSQPU+AKTdDiBUaMilCIPbS27weD41MgiFe00dqdIsZoD6AmAQ==",
   "success": true,
-  "projectFilePath": "D:\\Desktop\\интенсив\\probnik\\probnik\\probnik.csproj",
+  "projectFilePath": "D:\\Desktop\\моя прелесть\\probnik\\probnik.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\cfifg\\.nuget\\packages\\grpc.core\\2.40.0\\grpc.core.2.40.0.nupkg.sha512",
     "C:\\Users\\cfifg\\.nuget\\packages\\grpc.core.api\\2.40.0\\grpc.core.api.2.40.0.nupkg.sha512",

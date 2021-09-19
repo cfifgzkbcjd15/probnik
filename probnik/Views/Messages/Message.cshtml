@@ -59,6 +59,7 @@
     <div class="form-group col-md-5">
         <input hidden id="addDate" class="form-control" value="@DateTime.Now" required="" />
     </div>
+<input hidden id="Email" value="@Email" />
     @*<div class="form-group col-md-5">
             <input type="file" id="addPhoto" class="form-control" required="" />
         </div>*@
@@ -76,6 +77,27 @@
        //setInterval(function () {
        //     $('#time').load('Message.cshtml #time');
        // }, 3000);
+        //Добавление
+        @*$(document).ready(function () {
+            $('#btnSave').click(function () {
+                $.ajax({
+                    method: "POST",
+                    dataType: 'json',
+                    url: '@Url.Action("sendMessages")',
+                    data: {
+                        id: $("#addId").val(),
+                        message: $("#addMessage").val(),
+                        fromm: $("#addFromm").val(),
+                        date: $("#addDate").val()
+                        //photo: $("#addPhoto").val()
+                    },
+                    success: function (data) {
+                        // Получаем ответ с сервера с помощью ajax
+                        $('#div-id').html(data)
+                    }
+                });
+            });
+        });*@
         $(function  () {
             LoadData();
             $("#btnSave").click(function () {
@@ -89,7 +111,7 @@
                         date: $("#addDate").val()
                         //photo: $("#addPhoto").val()
                     },
-                    
+
                     success: function (data) {
                         LoadData();
 
@@ -98,19 +120,20 @@
                 return false;
             });
         });
-        //////setInterval(LoadData, 7500);
+        setInterval(LoadData, 7500);
 
         //Вывод
-        function LoadData() {
+        function LoadData(id = $("#addId").val(), Email = $("#Email").val()) {
 
         $("#tblMessages tbody tr").remove();
         $.ajax({
-            type: 'Get',
+            type: 'POST',
             url: '@Url.Action("getMessages")',
             dataType: 'json',
-            data: { idd: '' },
+            //data: { idd: '', },
+            data: { id: id, Email: Email },
             success: function (data) {
-                var items = '';
+                //var items = '';
                 $.each(data, function (i, item) {
                         var rows =
                             "<tr>"
@@ -124,6 +147,7 @@
                             + "</tr>";
                     $('#tblMessages tbody').append(rows);
                     $("#mydiv").scrollTop($("#mydiv")[0].scrollHeight);
+                    console.log(142);
 
 
                 });
