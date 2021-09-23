@@ -61,7 +61,7 @@
     </div>
 <input hidden id="Email" value="@Email" />
     @*<div class="form-group col-md-5">
-            <input type="file" id="addPhoto" class="form-control" required="" />
+            <input type="file" id="addPhoto" name="photo" class="form-control" required="" />
         </div>*@
 <div style="width: 100%; height: 70px;">
     <input type="text" style="width: 80%; border-radius: 5px;" id="addMessage" class="alignleft" placeholder="Введите сообщение" required="" />
@@ -98,17 +98,20 @@
                 });
             });
         });*@
-        $(function  () {
-            LoadData();
+        $(function () {
+            LoadData(id = $("#addId").val(),Email = $("#Email").val());
             $("#btnSave").click(function () {
+
                 $.ajax({
                     type: "POST",
                     url: '@Url.Action("sendMessages")',
                     data: {
+                        Email: Email,
                         id: $("#addId").val(),
                         message: $("#addMessage").val(),
                         fromm: $("#addFromm").val(),
                         date: $("#addDate").val()
+                        
                         //photo: $("#addPhoto").val()
                     },
 
@@ -147,7 +150,6 @@
                             + "</tr>";
                     $('#tblMessages tbody').append(rows);
                     $("#mydiv").scrollTop($("#mydiv")[0].scrollHeight);
-                    console.log(142);
 
 
                 });

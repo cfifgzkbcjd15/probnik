@@ -1399,7 +1399,6 @@ D:\Desktop\моя прелесть\probnik\bin\Debug\net5.0\runtimes\win-arm\lib
 D:\Desktop\моя прелесть\probnik\bin\Debug\net5.0\runtimes\win-arm64\lib\net5.0\dotnet-aspnet-codegenerator-design.exe
 D:\Desktop\моя прелесть\probnik\bin\Debug\net5.0\runtimes\win\lib\netstandard2.0\System.Runtime.Caching.dll
 D:\Desktop\моя прелесть\probnik\bin\Debug\net5.0\runtimes\win\lib\netstandard2.0\System.Security.Cryptography.ProtectedData.dll
-D:\Desktop\моя прелесть\probnik\obj\Debug\net5.0\probnik.csproj.AssemblyReference.cache
 D:\Desktop\моя прелесть\probnik\obj\Debug\net5.0\probnik.GeneratedMSBuildEditorConfig.editorconfig
 D:\Desktop\моя прелесть\probnik\obj\Debug\net5.0\probnik.AssemblyInfoInputs.cache
 D:\Desktop\моя прелесть\probnik\obj\Debug\net5.0\probnik.AssemblyInfo.cs
@@ -1428,7 +1427,6 @@ D:\Desktop\моя прелесть\probnik\obj\Debug\net5.0\Razor\Views\Home\Edi
 D:\Desktop\моя прелесть\probnik\obj\Debug\net5.0\Razor\Views\Home\Friends.cshtml.g.cs
 D:\Desktop\моя прелесть\probnik\obj\Debug\net5.0\Razor\Views\Home\GetUsers.cshtml.g.cs
 D:\Desktop\моя прелесть\probnik\obj\Debug\net5.0\Razor\Views\Home\Index.cshtml.g.cs
-D:\Desktop\моя прелесть\probnik\obj\Debug\net5.0\Razor\Views\Home\LichnKab.cshtml.g.cs
 D:\Desktop\моя прелесть\probnik\obj\Debug\net5.0\Razor\Views\Home\Privacy.cshtml.g.cs
 D:\Desktop\моя прелесть\probnik\obj\Debug\net5.0\Razor\Views\Home\UserId.cshtml.g.cs
 D:\Desktop\моя прелесть\probnik\obj\Debug\net5.0\Razor\Views\Messages\AddGroupChat.cshtml.g.cs
@@ -1458,3 +1456,5 @@ D:\Desktop\моя прелесть\probnik\obj\Debug\net5.0\probnik.dll
 D:\Desktop\моя прелесть\probnik\obj\Debug\net5.0\ref\probnik.dll
 D:\Desktop\моя прелесть\probnik\obj\Debug\net5.0\probnik.pdb
 D:\Desktop\моя прелесть\probnik\obj\Debug\net5.0\probnik.genruntimeconfig.cache
+D:\Desktop\моя прелесть\probnik\obj\Debug\net5.0\Razor\Views\Home\Comment.cshtml.g.cs
+D:\Desktop\моя прелесть\probnik\obj\Debug\net5.0\probnik.csproj.AssemblyReference.cache

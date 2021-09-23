@@ -8,6 +8,9 @@
     var addGroupChat = ViewBag.AddGroupChat as List<AddGroupChat>;
     var name = ViewBag.Name;
     var users = ViewBag.Users as List<User>;
+    var role = ViewBag.Mute as List<AddGroupChat>;
+    var Id = ViewBag.Id;
+
 }
 
 <style>
@@ -35,15 +38,14 @@
         {
             if (i.Photo != null)
             {
-                <td><img style='width:60px; height:60px;border-radius:30px;' src="data:image/jpeg;base64,@(Convert.ToBase64String(i.Photo))" /></td>
+        <td><img style='width:60px; height:60px;border-radius:30px;' src="data:image/jpeg;base64,@(Convert.ToBase64String(i.Photo))" />@name</td>
             }
             else
             {
-                <p align="center"><img style='width: 60px; height: 60px; border-radius: 35px;' src="https://cdn.pixabay.com/photo/2012/04/26/19/43/profile-42914_1280.png" /> @name</p>
+    <p align="center"><img style='width: 60px; height: 60px; border-radius: 35px;' src="https://cdn.pixabay.com/photo/2012/04/26/19/43/profile-42914_1280.png" />@name</p>
                 break;
             }
         }
-        <td align="right">@name</td>
     </tr>
 </table>
 
@@ -60,8 +62,9 @@
     </table>
 </div>
 </br>
+@foreach(var i in role) {
 <div class="form-group col-md-5">
-    <input hidden type="text" id="addId" value="@groupId" class="form-control" required="" />
+    <input hidden type="text" id="addId" value="@Id" class="form-control" required="" />
 </div>
 
 <div class="form-group col-md-5">
@@ -78,7 +81,7 @@
     @*<input  id="addPhoto" class="form-control" type="file" required="" />*@
     <input class="alignright" id="btnSave" value="Save" type="button">
 </div>
-
+}
 <link rel="stylesheet" href="~/css/photo.css" />
 @section Scripts
 {
@@ -100,19 +103,70 @@
                     success: function (data) {
                         LoadData();
 
+                    },
+                    error: function () {
+                        alert("Error while inserting data");
+                    }
+                });
+                return false;
+            });
+        });
+        @*
+             $(function  () {
+            LoadData();
+            $("#btnSave").click(function () {
+                $.ajax({
+                    type: "POST",
+                    url: '@Url.Action("sendMessages")',
+                    data: {
+                        id: $("#addId").val(),
+                        message: $("#addMessage").val(),
+                        fromm: $("#addFromm").val(),
+                        date: $("#addDate").val()
+                        //photo: $("#addPhoto").val()
+                    },
+
+                    success: function (data) {
+                        LoadData();
+
                     }
                 });
                 return false;
             });
         });
         setInterval(LoadData, 7500);
+            *@
+        @*$(function  (id) {
+
+            $("#btnDelete").click(function () {
+                $.ajax({
+                    type: "POST",
+                    url: '@Url.Action("deleteGroupMessage")',
+                    data: {
+                        id: 1
+                        //addGroupChatId: $("#addId").val(),
+                        //message: $("#addMessage").val(),
+                        //fromm: $("#addFromm").val(),
+                        //date: $("#addDate").val()
+                        //photo: $("#addPhoto").val()
+                    },
+
+                    success: function (data) {
+                        LoadData();
+
+                    }
+                });
+                return false;
+            });
+        });*@
+
 
         //Вывод
         function LoadData(groupId = $("#addId").val()) {
 
         $("#tblMessages tbody tr").remove();
         $.ajax({
-            type: 'POST',
+            type: 'GET',
             url: '@Url.Action("getGroupMessage")',
             dataType: 'json',
             data: { groupId: groupId},
@@ -120,17 +174,18 @@
                 $.each(data, function (i, item) {
                         var rows =
                             "<tr>"
+                        + "<input id='delete_i'/>"
                             + "<td style='border: 2px solid white;'>"
+
                             + "<div style='background-color: rgba(128, 128, 255,0.3);'>"
                             + "<p class='alignleft' >" + item.fromm + "</p>"
                             + "<p class='alignright' >" + item.date + "</p>" + "</br>"
                             + "</div>"
                             + "<p align='left' style='margin:20px;' >" + item.message + "</p>"
-                            + "</td>"
+                        + "</td>" + "<td>" + /*"<button id='btnDelete' value='item.id' />"+*/"</td>"
                             + "</tr>";
                     $('#tblMessages tbody').append(rows);
                     $("#mydiv").scrollTop($("#mydiv")[0].scrollHeight);
-                    console.log(142);
 
 
                 });

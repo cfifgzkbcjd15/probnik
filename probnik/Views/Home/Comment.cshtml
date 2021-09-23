@@ -1,0 +1,171 @@
+﻿@using probnik.Data
+@using probnik.Controllers
+@using System.Security.Claims;
+@model FriendsModel;
+@{
+    ViewData["Title"] = "Личный Кабинет";
+    var only = User.Identity.Name;
+    var idd = User.FindFirstValue(ClaimTypes.NameIdentifier);
+}
+<style>
+    .verticalLine {
+        border: 1px solid #ebf3f5;
+    }
+
+    .photo {
+        width: 100px;
+        height: 100px;
+    }
+
+    img {
+        width: 90px;
+        height: 90px;
+    }
+
+    @@media (max-width:600px) {
+        img {
+            width: 60px;
+            height: 60px;
+        }
+
+        .photo {
+            width: 60px;
+            height: 60px;
+        }
+    }
+</style>
+<center>
+    @foreach (var i in Model.User.Where(x => x.Id == idd))
+    {
+        <h2> @i.Name</h2>
+        @if (i.Photo != null)
+        {
+            <img class="photo" style='width:120px; height:100px;' src="data:image/jpeg;base64,@(Convert.ToBase64String(i.Photo))" />
+        }
+        else
+        {
+            <img class="photo" style='width:120px; height:100px;' src="https://cdn.pixabay.com/photo/2012/04/26/19/43/profile-42914_1280.png" />
+        }
+        <br />
+
+
+        <p>Возраст: @(2021-i.Year.Year)</p>
+        <p>Номер Телефона: @i.PhoneNumber</p>
+        <p>Почта: @i.Email</p>
+        <a asp-action="UsersAlbums" asp-controller="albums" asp-route-userId="@idd">Альбом</a>
+    }
+
+
+    @foreach (var i in Model.Posts)
+    {
+        <div id="time">
+            <div class="scroll_div" id="mydiv" style=" overflow: scroll;overflow-x:hidden;;background:white;">
+                <table width="100%" id="tblComments" class="">
+                    <tbody style="height:100%"></tbody>
+                </table>
+            </div>
+        </div>
+        <div style="">
+            @foreach (var j in Model.User.Where(x => x.Id == idd))
+            {
+                <div class="form-group col-md-5">
+                    <input hidden type="text" id="addName" value="@j.Name" class="form-control" required="" />
+                </div>
+
+
+                <div class="form-group col-md-5">
+                    <input hidden type="text" id="addDate" value="@DateTime.Now" class="form-control" required="" />
+                </div>
+
+                <div class="form-group col-md-5">
+                    <input hidden id="addPostId" class="form-control" value="@i.Id" required="" />
+                </div>
+                <div style="width: 100%; height: 70px;">
+
+                    <input type="text" style="width: 80%; border-radius: 5px;" id="addBody" class="alignleft" placeholder="Введите комментарий" required="" />
+                    <input onclick="fync();" class="alignright" name="submitButton" id="btnSave" value="Save" type="button">
+                </div>
+            }
+        </div>
+    }
+    @section Scripts
+    {
+        <script type="text/javascript">
+                $(document).ready(function () {
+                    $("figcaption").each(function () {
+                        if ($(this).prop("innerHTML").length > 30) {
+                            let val = $(this).prop("innerHTML");
+                            $(this).attr("title", val);
+                            $(this).prop("innerHTML", val.substr(0, 30) + "...")
+                        }
+                    });
+                });
+           //setInterval(function () {
+           //     $('#time').load('Message.cshtml #time');
+                // }, 3000);
+            @*$(function  () {
+                LoadData();
+                $("#btnSave").click(function () {
+                    $.ajax({
+                        type: "POST",
+                        url: '@Url.Action("sendComments")',
+                        data: {
+                            body: $("#addBody").val(),
+                            name: $("#addName").val(),
+                            postId: $("#addPostId").val(),
+                            Data: $("#addData").val()
+                            //photo: $("#addPhoto").val()
+                        },
+
+                        success: function (data) {
+                            // alert("Data has been added successfully.");
+                            LoadData();
+
+                        },
+                        error: function () {
+                            alert("Error while inserting data");
+                        }
+                    });
+                    return false;
+                });
+            });
+            //setInterval(LoadData, 7500);
+            //Вывод
+            function LoadData() {
+
+            $("#tblComments tbody tr").remove();
+            $.ajax({
+                type: 'POST',
+                url: '@Url.Action("getComments")',
+                dataType: 'json',
+                data: {},
+                success: function (data) {
+                    $.each(data, function (i, item) {
+                        var rows =
+                            "<tr>"
+                            + "<td style='border: 2px solid white;' class='prtoducttd'>"
+                            + "<div style='background-color: rgba(128, 128, 255,0.3);'>"
+                            + "<p class='alignleft' >" + item.name + "</p>"
+                            + "<p class='alignright' >" + item.data + "</p>" + "</br>"
+                            + "</div>"
+                            + "<p align='left' style='margin:20px;' >" + item.body + "</p>"
+                            + "</td>"
+                            + "</tr>";
+
+                            $('#tblComments tbody').append(rows);
+                        $("#mydiv").scrollTop($("#mydiv")[0].scrollHeight);
+
+                    });
+                },
+                error: function (ex) {
+                    var r = jQuery.parseJSON(response.responseText);
+                    alert("Messagee: " + r.Messagee);
+                    alert("StackTrace: " + r.StackTrace);
+                    alert("ExceptionType: " + r.ExceptionType);
+                }
+            });
+            return false;
+            }*@
+        </script>
+
+    }

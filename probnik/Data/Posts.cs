@@ -24,6 +24,8 @@ namespace probnik.Data
         public byte[] Photo { get; set; }
         [Column("video")]
         public byte[] Video { get; set; }
+        [Column("likes")]
+        public long Likes { get; set; }
         [Column("music")]
         public byte[] Music { get; set; }
         public Comments Comments { get; set; }

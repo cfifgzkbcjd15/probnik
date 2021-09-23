@@ -18,7 +18,7 @@
     <label class="control-label">Фото беседы</label>
     <input type="file" name="updatedPhoto" class="form-control" />
     <input hidden type="text" name="groupModels[0].userId" value="@idd" class="form-control" />
-    <input hidden value="@only" name="groupModels[0].Creator" class="form-control" />
+    <input hidden value="Создатель" name="groupModels[0].Role" class="form-control" />
     <input hidden name="groupModels[0].GroupId" value="@groupId" class="form-control" />
     @foreach (var i in friends)
     {
@@ -27,7 +27,6 @@
         {
             <label class="control-label">@j.Name</label>
             <input type="checkbox" name="groupModels[@a].userId" value="@j.Id" class="form-control" />
-            <input hidden name="groupModels[@a].Creator" class="form-control" />
             <input hidden name="groupModels[@a].GroupId" value="@groupId" class="form-control" />
         }
     }

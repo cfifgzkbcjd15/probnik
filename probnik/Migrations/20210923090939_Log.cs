@@ -91,6 +91,7 @@ namespace probnik.Migrations
                     data = table.Column<DateTime>(type: "datetime2", nullable: false),
                     photo = table.Column<byte[]>(type: "varbinary(max)", nullable: true),
                     video = table.Column<byte[]>(type: "varbinary(max)", nullable: true),
+                    likes = table.Column<long>(type: "bigint", nullable: false),
                     music = table.Column<byte[]>(type: "varbinary(max)", nullable: true)
                 },
                 constraints: table =>
@@ -149,7 +150,7 @@ namespace probnik.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     groupId = table.Column<long>(type: "bigint", nullable: false),
                     userId = table.Column<string>(type: "nvarchar(450)", nullable: true),
-                    creator = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    role = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     photo = table.Column<byte[]>(type: "varbinary(max)", nullable: true),
                     name = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
@@ -299,6 +300,27 @@ namespace probnik.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "LikesPosts",
+                columns: table => new
+                {
+                    id = table.Column<long>(type: "bigint", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    postId = table.Column<int>(type: "int", nullable: false),
+                    userName = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    like = table.Column<long>(type: "bigint", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_LikesPosts", x => x.id);
+                    table.ForeignKey(
+                        name: "FK_LikesPosts_Posts_postId",
+                        column: x => x.postId,
+                        principalTable: "Posts",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "GroupChat",
                 columns: table => new
                 {
@@ -377,6 +399,11 @@ namespace probnik.Migrations
                 column: "addGroupChatId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_LikesPosts_postId",
+                table: "LikesPosts",
+                column: "postId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Messages_id",
                 table: "Messages",
                 column: "id");
@@ -414,6 +441,9 @@ namespace probnik.Migrations
                 name: "GroupChat");
 
             migrationBuilder.DropTable(
+                name: "LikesPosts");
+
+            migrationBuilder.DropTable(
                 name: "Messages");
 
             migrationBuilder.DropTable(
@@ -423,10 +453,10 @@ namespace probnik.Migrations
                 name: "AspNetRoles");
 
             migrationBuilder.DropTable(
-                name: "Posts");
+                name: "AddGroupChat");
 
             migrationBuilder.DropTable(
-                name: "AddGroupChat");
+                name: "Posts");
 
             migrationBuilder.DropTable(
                 name: "Albums");

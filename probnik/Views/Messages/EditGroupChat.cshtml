@@ -9,6 +9,8 @@
     var groupId = ViewBag.GroupId;
     var addGroupChat = ViewBag.AddGroupChat as List<AddGroupChat>;
     var idd = User.FindFirstValue(ClaimTypes.NameIdentifier);
+    var friends = ViewBag.Friends as List<Friends>;
+    var a = -1;
     // asp-route-groupId="@Model.GroupId"asp-route-Name="@Model.Name"
 
 }
@@ -16,7 +18,6 @@
     #element::-webkit-scrollbar {
         width: 0;
     }
-
 </style>
 <form asp-action="EditGroupChat" asp-controller="Messages" enctype="multipart/form-data">
     <label>Изменить название</label>
@@ -25,29 +26,26 @@
     <input type="file" name="updatedPhoto" class="form-control" />
     <input hidden type="text" name="addGroupChat[0].userId" value="@idd" class="form-control" />
     <input hidden name="addGroupChat[0].Id" value="@Model.Id" class="form-control" />
-    <input hidden name="addGroupChat[0].Creator" value="@only" class="form-control" />
+    <input hidden name="addGroupChat[0].Role" value="Создатель" class="form-control" />
     <input hidden name="addGroupChat[0].GroupId" value="@groupId" class="form-control" />
     @for (int i = 0; i < users.Count; i++)
     {
         <div class="form-group">
             <input hidden type="text" name="addGroupChat[@i].userId" value="@users[i].Id" class="form-control" />
             <input hidden name="addGroupChat[@i].Id" value="@users[i].AddGroupChats.Id" class="form-control" />
-            <input hidden name="addGroupChat[@i].Creator" value="@only" class="form-control" />
             <input hidden name="addGroupChat[@i].GroupId" value="@groupId" class="form-control" />
         </div>
-
+        <p></p>
     }
     <div class="form-group">
         <input type="submit" value="Сохранить" class="btn btn-default" />
     </div>
 </form>
-
-<form asp-controller="Messages" asp-action="DeleteUsersChat" method="post">
-    <table>
-        <tr><td colspan="2" align="center"><h2>Пользователи</h2></td></tr>
-
-        @foreach (var i in addGroupChat)
-        {
+<h2 align="center">Пользователи</h2>
+@foreach (var i in addGroupChat)
+{
+    <form asp-controller="Messages" asp-action="DeleteUsersChat" method="post">
+        <table>
             <tr>
                 <td>@i.user.Name</td>
                 <td><input hidden name="Id" type="text" value="@i.Id" /></td>
@@ -55,45 +53,57 @@
                     <input type="submit" class="btn btn-default" value="Удалить" />
                 </td>
             </tr>
-        }
-    </table>
-</form>
+            
+        </table>
+    </form>
+}
 
-<div class="vcenter">
-    <ul class="products clearfix">
-        <div id="example_1" display:block;">
-        <li class="product-wrapper">
-            <div class="thumbnail">
-                <div class="sizee">
-                    <a href="#win 1"><p>Добавить новых участников беседы</p></a>
-                </div>
-                <!-- Модальное окно №5 -->
-                <a href="#x"  class="overlay" id="win 1"></a>
-                <div id="element" class="popup" style="border-color: rgba(128, 128, 255,0.3); height: 640px; overflow-y: scroll;">
-                    <br />
-                    @foreach (var i in userss)
-                    {
-                        <p>@i.Name </p>
-                        <p>@i.Name </p>
-                        <p>@i.Name </p>
-                        <p>@i.Name </p>
-                    }
-                    <div class="desk">
-                        <ul id="menu">
-                            <li></li>
+    <div class="vcenter">
+        <ul class="products clearfix">
+            <div id="example_1" display:block;">
+            <li class="product-wrapper">
+                <div class="thumbnail">
+                    <div class="sizee">
+                        <a href="#win 1"><p>Добавить новых участников беседы</p></a>
                     </div>
-                    <a class="close" style="top: 0%;right: 0%;border-radius: 18px;" title="Закрыть" href="#close"></a>
+                    <!-- Модальное окно №5 -->
+                    <a href="#x" class="overlay" id="win 1"></a>
+                    <div id="element" class="popup" style="border-color: rgba(128, 128, 255,0.3); height: 100%; overflow-y: scroll;">
+                        <br />
+                        <form asp-action="AddUserChat" asp-controller="Messages" enctype="multipart/form-data">
+                            <div>
+                                @foreach (var i in friends)
+                                {
+                                    foreach (var j in userss.Where(x => (x.Id == i.Sender || x.Id == i.Recipient) && x.AddGroupChats == null))
+                                    {
+                                        a += 1;
+                                        <label class="control-label">@j.Name</label>
+                                        <input type="checkbox" name="addUserChat[@a].userId" value="@j.Id" class="form-control" />
+                                        <input hidden name="addUserChat[@a].GroupId" value="@groupId" class="form-control" />
+                                    }
+                                    //}
+                                }
+                                <div class="form-group">
+                                    <input type="submit" value="Сохранить" class="btn btn-default" />
+                                </div>
+                            </div>
+                        </form>
+                        <div class="desk">
+                            <ul id="menu">
+                                <li></li>
+                        </div>
+                        <a class="close" style="top: 0%;right: 0%;border-radius: 18px;" title="Закрыть" href="#close"></a>
+                    </div>
+                    <div class="caption">
+                        <h3>
+                            <a href="#"></a>
+                        </h3>
+                        <p></p>
+                    </div>
                 </div>
-                <div class="caption">
-                    <h3>
-                        <a href="#"></a>
-                    </h3>
-                    <p></p>
-                </div>
-            </div>
-        </li>
-</div>
-            </ul>
+            </li>
+    </div>
+    </ul>
 
-        </div>
-<link rel="stylesheet" href="~/css/photo.css" />
+    </div>
+    <link rel="stylesheet" href="~/css/photo.css" />

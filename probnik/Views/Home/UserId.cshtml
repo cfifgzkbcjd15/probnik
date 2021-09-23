@@ -14,7 +14,10 @@
     var albums = ViewBag.Albums as List<Albums>;
     var photos = ViewBag.Photos as List<Photos>;
     var friends = ViewBag.Friends as List<Friends>;
+    var likes = ViewBag.Likes as List<LikesPosts>;
+    long sum = 0;
 }
+
 <style>
     .verticalLine {
         border: 1px solid #ebf3f5;
@@ -41,7 +44,18 @@
             height: 60px;
         }
     }
+
+    @@media (max-width:600px) {
+        body {
+            font-size: 8px;
+        }
+    }
 </style>
+<link rel="stylesheet" href="~/css/photo.css" />
+@if (idd == mid)
+{
+    <a asp-action="EditUser" asp-route-id="@idd">Редактировать</a>
+}
 <center>
     @foreach (var i in userId)
     {
@@ -60,101 +74,157 @@
         <p>Возраст: @(2021-i.Year.Year)</p>
         <p>Номер Телефона: @i.PhoneNumber</p>
         <p>Почта: @i.Email</p>
-        <a asp-action="UsersAlbums" asp-controller="albums" asp-route-userId="@mid">Альбом</a>
-    }
-    <br />
-    @foreach(var i in friends.Where(x=>x.Sender!=idd&&x.Recipient!=mid))
-    {
-            <form asp-action="AddFriends" asp-controller="home">
-                <input hidden name="sender" value="@idd" />
-                <input hidden name="recipient" value="@mid" />
-                <input hidden name="confirmation" value="false" />
-                <div class="form-group">
-                    <input type="submit" value="Добавить в друзья" class="btn btn-default" />
-                </div>
-            </form>
-    }
 
+    }
+    @if (friends.Where(x => x.Sender == mid && x.Recipient == idd || x.Recipient == mid && x.Sender == idd).Count() == 0)
+    {
+        <form asp-action="AddFriends" asp-controller="home">
+            <input hidden name="sender" value="@idd" />
+            <input hidden name="recipient" value="@mid" />
+            <input hidden name="confirmation" value="false" />
+            <div class="form-group">
+                <input style="color: white; background: #5fa6ff; width: 35%; " type="submit" value="Добавить в друзья" class="btn btn-default" />
+            </div>
+        </form>
+    }
+    <a asp-action="UsersAlbums" asp-controller="albums" asp-route-userId="@mid">Фотографии</a>
+    </br>
     @foreach (var i in albums)
     {
-        foreach (var j in photos)
+
+        foreach (var j in photos.Where(x => x.albumId == i.Id).Take(2))
         {
             <img style='width:100px; height:100px;' src="data:image/jpeg;base64,@(Convert.ToBase64String(j.Photo))" />
         }
-        break;
     }
     <br />
+
+
+
+
     <a asp-action="CreatePosts" asp-route-id="@mid">Добавить Новость</a>
+    <br />
+    <br />
     @if (post != null)
     {
         foreach (var i in post)
         {
-            <div style="border: 3px solid #ebf3f5">
-                <p>@i.Body</p>
-                @if (i.Photo != null)
+            @if (comment != null)
+            {
+                @foreach (var j in comment.Where(x => x != null && x.postId == i.Id).TakeLast(1))
                 {
-                    <img style='width:80px; height:60px;' src="data:image/jpeg;base64,@(Convert.ToBase64String(i.Photo))" />
+
+                    <div style="border: 3px solid #ebf3f5">
+                        <ul class="products clearfix">
+                            <div id="example_@i.Id" display:block;">
+                            <li class="product-wrapper">
+                                <div class="thumbnail">
+                                    <div class="sizee">
+                                        <a href="#win @i.Id">
+                                            <p>@i.Body</p>
+                                                @if (i.Photo != null)
+                                                {
+                                                    <img style="border-radius: 15px;" title="" src="data:video/mp4;base64,@(Convert.ToBase64String(i.Photo))" alt="" />
+
+                                                }
+                                        </a>
+                                    </div>
+                                    <!-- Модальное окно №5 -->
+                                    <a href="#x" class="overlay" id="win @i.Id"></a>
+                                    <div class="popup" style="border-color:rgba(128, 128, 255,0.3)">
+
+                                        <p>Описание: @i.Body</p>
+                                        <br />
+                                        @if (i.Photo != null)
+                                        {
+                                            <img class="is-image" src="data:video/mp4;base64,@(Convert.ToBase64String(i.Photo))" alt="" />
+                                        }<p>
+                                            <div class="desk">
+                                                <ul id="menu">
+                                                    <li></li>
+                                            </div>
+                                        <p>Комментарии</p>
+                                        <div>
+                                            <p align="left">@j.Name</p>
+                                            <p>@j.Body</p>
+                                        </div>
+                                        <a class="close" style="top: 0%;right: 0%;border-radius: 18px;" title="Закрыть" href="#close"></a>
+                                    </div>
+                                    <div class="caption">
+                                        <h3>
+                                            <a href="#"></a>
+                                        </h3>
+                                        <p></p>
+                                    </div>
+                                </div>
+                            </li>
+                    </div>
+                    </ul>
+                    </div>
                 }
-                @if (i.Video != null)
-                {
-                    <video controls width="300px" height="250px" src="data:video/mp4;base64,@(Convert.ToBase64String(i.Video))"></video>
-                }
-                @if (i.Music != null)
-                {
-                    <audio controls width="300px" height="250px" src="data:audio/mp3;base64,@(Convert.ToBase64String(i.Music))"></audio>
-                }
-                @if (User.IsInRole("admin") || User.IsInRole("editor"))
+            }
+            @*@if (User.IsInRole("admin") || User.IsInRole("editor"))
                 {
                     <form asp-controller="Home" asp-action="DeletePosts" method="post" asp-route-id="@i.Id">
                         <p align="center">
                             <input type="submit" class="btn btn-default" value="Удалить" />
                         </p>
                     </form>
-                }
-                @if (comment != null) { 
-                <div class="verticalLine"></div>
-                @foreach (var j in comment)
+                }*@
+            @*@if (likes != null)
                 {
-                    <div>
-                        <p align="left">@j.Name</p>
-                        <p>@j.Body</p>
-                    </div>
-                    <form asp-controller="Home" asp-action="DeleteComments" method="post" asp-route-id="@i.Id">
-                        <p align="center">
-                            <input type="submit" class="btn btn-default" value="Удалить" />
-                        </p>
-                    </form>
-                    <div class="verticalLine"></div>
-                }
-                <div class="verticalLine"></div>
-                <form asp-action="LichnKab" asp-controller="home">
-                    <div hidden class="form-group">
-                        <label asp-for="postId" class="control-label">Имя</label>
-                        <input type="text" asp-for="postId" value="@i.Id" class="form-control" />
-                    </div>
-                    <div hidden class="form-group">
-                        <label asp-for="Data" class="control-label">Имя</label>
-                        <input type="text" asp-for="Data" value="@DateTime.Now" class="form-control" />
-                    </div>
-                    <div align="left" class="form-group">
-                        <label asp-for="Body" class="control-label">Комментарий</label>
-                        <input type="text" asp-for="Body" class="form-control" />
-                    </div>
-                    @foreach (var j in user)
+                    @foreach (var j in user.Where(x => x.Id == idd))
                     {
-                        <div hidden align="left" class="form-group">
-                            <label asp-for="Name" class="control-label">Автор поста</label>
-                            <input type="text" asp-for="Name" value="@j.Name" class="form-control" />
-                        </div>
-                    }
-                    <div class="form-group">
-                        <input type="submit" value="Отправить" class="btn btn-default" />
-                    </div>
-                </form>
-                }
-            </div>
+                        if (likes.Where(x => x.UserName == j.Name && x.postId == i.Id).Sum(x => x.Like) < 1)
+                        {
+                            // > 1
+                            @Html.ActionLink("addLikes", "addLikes", new { id = i.Id, name = j.Name,userId=mid })
 
-            <br />
+                        }
+                        else
+                        {
+                            foreach (var k in likes.Where(x => x.postId == i.Id))
+                            {
+                                @Html.ActionLink("delLikes", "delLikes", new { id = k.Id, userId = mid })
+                            }
+                        }
+
+                    }
+                }*@
+            @*<form asp-controller="Home" asp-action="DeleteComments" method="post" asp-route-uss="@mid" asp-route-id="@j.Id">
+                <input hidden name="userId" value="@mid" />
+                <p align="center">
+                    <input type="submit" class="btn btn-default" value="Удалить" />
+                </p>
+            </form>*@
+            <div class="verticalLine"></div>
+        <div class="verticalLine"></div>
+        <form asp-action="UserId" asp-controller="home">
+            <div hidden class="form-group">
+                <label asp-for="postId" class="control-label">Имя</label>
+                <input type="text" asp-for="postId" value="@i.Id" class="form-control" />
+            </div>
+            <div hidden class="form-group">
+                <label asp-for="Data" class="control-label">Имя</label>
+                <input type="text" asp-for="Data" value="@DateTime.Now" class="form-control" />
+            </div>
+            <div align="left" class="form-group">
+                <label asp-for="Body" class="control-label">Комментарий</label>
+                <input type="text" asp-for="Body" class="form-control" />
+            </div>
+            @foreach (var j in user)
+            {
+                <div hidden align="left" class="form-group">
+                    <label asp-for="Name" class="control-label">Автор поста</label>
+                    <input type="text" asp-for="Name" value="@j.Name" class="form-control" />
+                </div>
+            }
+            <input hidden name="userId" value="@mid" />
+            <div class="form-group">
+                <input type="submit" value="Отправить" class="btn btn-default" />
+            </div>
+        </form>
+        <br />
         }
     }
 </center>

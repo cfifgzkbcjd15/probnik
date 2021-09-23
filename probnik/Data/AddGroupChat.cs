@@ -17,8 +17,8 @@ namespace probnik.Data
         public long GroupId { get; set; }
         [Column("userId")]
         public string userId { get; set; }
-        [Column("creator")]
-        public string Creator { get; set; }
+        [Column("role")]
+        public string Role { get; set; }
         [Column("photo")]
         public byte[] Photo { get; set; }
         [Column("name")]

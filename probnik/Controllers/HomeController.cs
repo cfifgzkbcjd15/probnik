@@ -23,6 +23,8 @@ namespace probnik.Controllers
         public List<Friends> Friends { get; set; }
         public List<User> User { get; set; }
         public List<Messages> Message { get; set; }
+        public List<Posts> Posts { get; set; }
+        public List<Comments> Comments { get; set; }
     }
     [Authorize]
     public class HomeController : Controller
@@ -63,15 +65,13 @@ namespace probnik.Controllers
                 var userr = db.Users.ToList();
                 User user = await db.Users.FirstOrDefaultAsync(p => p.Id == id);
                 var idd = User.FindFirstValue(ClaimTypes.NameIdentifier);
-                ViewBag.Albums = db.Albums.Where(x => x.UserId == idd).ToList();
+                ViewBag.Albums = db.Albums.Where(x => x.UserId == id).ToList();
                 ViewBag.Photos = db.Photos.ToList();
                 ViewBag.Posts = db.Posts.Where(x => x.To == id).ToList();
+                ViewBag.Likes = db.LikesPosts.ToList();
                 var list = db.Posts.Where(x => x.To == id).ToList();
                 ViewBag.Mid = id;
-                foreach (var i in list)
-                {
-                    ViewBag.Comments = db.Comments.Where(x => x != null && x.postId == i.Id).ToList();
-                }
+                ViewBag.Comments = db.Comments.ToList();
                 ViewBag.User = db.Users.Where(x => x.Email == User.Identity.Name).ToList();
                 ViewBag.UserId = db.Users.Where(x => x.Id == id).ToList();
                 if (user != null)
@@ -80,7 +80,7 @@ namespace probnik.Controllers
             return NotFound("Страница удалена");
         }
         [HttpPost]
-        public async Task<IActionResult> UserId(CommentsViewModels cvm, Comments comment)
+        public async Task<IActionResult> UserId(CommentsViewModels cvm, Comments comment,string userId)
         {
             if (cvm.Photo != null)
             {
@@ -120,7 +120,7 @@ namespace probnik.Controllers
                 db.Comments.Add(comment);
             }
             await db.SaveChangesAsync();
-            return RedirectToAction("UserId");
+            return RedirectToAction("UserId", "Home",new { userId });
         }
         public IActionResult CreatePosts(string? id)
         {
@@ -133,8 +133,10 @@ namespace probnik.Controllers
             return NotFound("ошибка");
         }
         [HttpPost]
-        public async Task<IActionResult> CreatePosts(PostsViewModel pvm, Posts posts)
+        public async Task<IActionResult> CreatePosts(PostsViewModel pvm, Posts posts, string Id)
         {
+            var idd = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            
             if (pvm.Photo != null)
             {
                 byte[] imageData = null;
@@ -170,10 +172,24 @@ namespace probnik.Controllers
             }
             db.Posts.Add(posts);
             await db.SaveChangesAsync();
-            return RedirectToAction("LichnKab");
+            return RedirectToAction("UserId",new { Id });
+        }
+        public ActionResult addLikes(int id,string name,string userId)
+        {
+            LikesPosts update = new LikesPosts() {postId=id,UserName=name,Like=1 };
+            db.LikesPosts.Add(update);
+            db.SaveChanges();
+            return RedirectToAction("UserId" + userId);
+        }
+        public ActionResult delLikes(int id,string userId)
+        {
+            LikesPosts update = new LikesPosts() { Id=id};
+            db.LikesPosts.Remove(update);
+            db.SaveChanges();
+            return RedirectToAction("UserId"+userId);
         }
         [HttpPost]
-        public async Task<IActionResult> DeletePosts(int? id)
+        public async Task<IActionResult> DeletePosts(int? id,string userId)
         {
             if (id != null)
             {
@@ -189,13 +205,14 @@ namespace probnik.Controllers
                     }
                     db.Posts.Remove(posts);
                     await db.SaveChangesAsync();
-                    return RedirectToAction("LichnKab");
+                    userId = posts.UserId;
+                    return RedirectToAction("UserId", "Home", userId);
                 }
             }
             return NotFound();
         }
         [HttpPost]
-        public async Task<IActionResult> DeleteComments(int? id)
+        public async Task<IActionResult> DeleteComments(string uss,int id)
         {
             if (id != null)
             {
@@ -204,25 +221,25 @@ namespace probnik.Controllers
                 {
                     db.Comments.Remove(comments);
                     await db.SaveChangesAsync();
-                    return RedirectToAction("Index");
+                    return RedirectToAction("UserId",new { uss });
+                    //return RedirectToRoute("default", new { controller="Home", action="UserId", userId });
                 }
             }
             return NotFound();
         }
-        public IActionResult LichnKab()
+        public IActionResult Comment()
         {
-            var idd = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            ViewBag.Albums = db.Albums.Where(x => x.UserId == idd).ToList();
-            ViewBag.Photos = db.Photos.ToList();
-            ViewBag.Posts = db.Posts.Where(x => x.To == idd).ToList();
-            var list = db.Posts.Where(x => x.To == idd).ToList();
-            //foreach (var i in list)
-            //{
-            //    ViewBag.Comments = db.Comments.Where(x => x != null && x.postId == i.Id).ToList();
-            //}
-            ViewBag.Comments = db.Comments.ToList();
-            ViewBag.User = db.Users.Where(x => x.Email == User.Identity.Name).ToList();
-            return View();
+            var users = db.Users.ToList();
+            var posts = db.Posts.ToList();
+            var coment = db.Comments.ToList();
+            FriendsModel model = new FriendsModel()
+            {
+                User=users,
+                Posts=posts,
+                Comments=coment
+            };
+            
+            return View(model);
         }
         //public async Task<ActionResult> sendComments(Comments cms)
         //{
@@ -236,24 +253,13 @@ namespace probnik.Controllers
         //    return Json(new { Messagee = messagee, System.Web.Mvc.JsonRequestBehavior.AllowGet });
 
         //}
-        //public JsonResult getComments(string id)
+        //public JsonResult getComments()
         //{
-        //    var idd = User.FindFirstValue(ClaimTypes.NameIdentifier);
         //    List<Comments> comments = new List<Comments>();
-        //    comments = db.Comments.Where(x=>x.Posts.UserId==idd).ToList();
+        //    comments = db.Comments.ToList();
 
         //    return Json(comments);
         //}
-        [HttpPost]
-        public async Task<IActionResult> LichnKab(Comments comments)
-        {
-            if (comments.Body != null)
-            {
-                db.Comments.Add(comments);
-            }
-            await db.SaveChangesAsync();
-            return RedirectToAction("LichnKab");
-        }
         public async Task<IActionResult> EditUser(string id, EdUserViewModel evm)
         {
             User user = await _userManager.FindByIdAsync(id);

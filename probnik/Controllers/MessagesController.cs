@@ -63,7 +63,8 @@ namespace probnik.Controllers
                 AddGroupChats = list,
                 User = user
             };
-            ViewBag.Messages = db.Messages.Where(x => x.Fromm == userName || x.id == id).ToList();
+
+            ViewBag.Messages = db.Messages.ToList();
             //ViewBag.Users = db.Users.ToList();
             ViewBag.Photo = db.Messages.Select(x => x.Photo).ToList();
             ViewBag.AddGroupChat = db.AddGroupChat.Where(x => x.userId == id).ToList();
@@ -98,9 +99,23 @@ namespace probnik.Controllers
 
         }
         [HttpPost]
-        public async Task<ActionResult> sendMessages(Messages msg)
+        public async Task<ActionResult> sendMessages(Messages msg,string Email)
         {
-            
+            //if (photo != null)
+            //{
+            //    byte[] imageData = null;
+            //    // считываем переданный файл в массив байтов
+            //    using (var binaryReader = new BinaryReader(photo.OpenReadStream()))
+            //    {
+            //        imageData = binaryReader.ReadBytes((int)photo.Length);
+            //    }
+            //    // установка массива байтов
+            //    msg.Photo = imageData;
+            //}
+            var idd = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var only = User.Identity.Name;
+            //var messag = db.Messages.LastOrDefault(x => (x.id == msg.id && x.Fromm == only) || (x.Fromm == Email && x.id == idd));
+            var mes = db.Messages.ToList();
             if (msg.Message != null)
             {
                 db.Messages.Add(msg);
@@ -179,7 +194,7 @@ namespace probnik.Controllers
         //    }
         //    return NotFound();
         //}
-        public async Task<IActionResult> AddGroupChat()
+        public IActionResult AddGroupChat()
         {
             var idd = User.FindFirstValue(ClaimTypes.NameIdentifier);
             var only = User.Identity.Name;
@@ -207,7 +222,7 @@ namespace probnik.Controllers
             return View();
         }
         [HttpPost]
-        public async Task<IActionResult> AddGroupChat(List<AddGroupChat> groupModels, string NameGroup, IFormFile updatedPhoto, string CreatorGroup, long groupId, string userId)
+        public async Task<IActionResult> AddGroupChat(List<AddGroupChat> groupModels, string NameGroup, IFormFile updatedPhoto)
         {
             for (var i = 0; i < groupModels.Count(); i++)
             {
@@ -222,18 +237,21 @@ namespace probnik.Controllers
                     // установка массива байтов
                     groupModels[0].Photo = imageData;
                 }
-                groupModels[0].Creator = groupModels[0].Creator;
+                groupModels[0].Role = groupModels[0].Role;
                 groupModels[0].Name = NameGroup;
-                if (groupModels[i].userId != null)
+                if (groupModels[i].userId != null) 
                 {
-                    db.AddGroupChat.AddRange(groupModels[i]);
+                db.AddGroupChat.AddRange(groupModels[i]);
                 }
+
             }
+            
             await db.SaveChangesAsync();
             return RedirectToAction("Index");
         }
         public async Task<IActionResult> EditGroupChat(long? groupId)
         {
+            var idd = User.FindFirstValue(ClaimTypes.NameIdentifier);
             if (groupId != null)
             {
                 AddGroupChat addGroupChat = await db.AddGroupChat.FirstOrDefaultAsync(p => p.GroupId == groupId);
@@ -243,7 +261,8 @@ namespace probnik.Controllers
                     ViewBag.UserId = groupId;
                     ViewBag.Users = db.Users.Where(x => x.AddGroupChats.GroupId == groupId).ToList();
                     ViewBag.Userss = db.Users.ToList();
-                    ViewBag.AddGroupChat = db.AddGroupChat.Where(x => x.GroupId == groupId&& x.Creator != User.Identity.Name).ToList();
+                    ViewBag.AddGroupChat = db.AddGroupChat.Where(x => x.GroupId == groupId).ToList();
+                    ViewBag.Friends = db.Friends.Where(x => x.Sender == idd || x.Recipient == idd).ToList();
 
                     return View(addGroupChat);
                 }
@@ -266,10 +285,21 @@ namespace probnik.Controllers
                     // установка массива байтов
                     addGroupChat[0].Photo = imageData;
                 }
-                addGroupChat[0].Creator = addGroupChat[0].Creator;
+                addGroupChat[0].Role = addGroupChat[0].Role;
                 addGroupChat[0].Name = NameGroup;
                 db.AddGroupChat.UpdateRange(addGroupChat[i]); ;
             }
+            await db.SaveChangesAsync();
+            return RedirectToAction("Index");
+        }
+        [HttpPost]
+        public async Task<IActionResult> AddUserChat(List<AddGroupChat> addUserChat)
+        {
+            //for (var i = 0; i < addUserChat.Where(x => x.userId != null).Count(); i++)
+            //{
+            //    db.AddGroupChat.UpdateRange(addUserChat[i]); ;
+            //}
+            db.AddGroupChat.UpdateRange(addUserChat.Where(x=>x.userId!=null));
             await db.SaveChangesAsync();
             return RedirectToAction("Index");
         }
@@ -277,13 +307,15 @@ namespace probnik.Controllers
         {
             if (groupId != null)
             {
-
+                var idd = User.FindFirstValue(ClaimTypes.NameIdentifier);
                 GroupChat groupChats = await db.GroupChat.FirstOrDefaultAsync(p => p.addGroupChat.GroupId == groupId && p.addGroupChat.Name == Name);
 
                 ViewBag.GroupId = groupId;
                 ViewBag.Name = Name;
+                ViewBag.Id = db.AddGroupChat.OrderBy(x=>x.Id).FirstOrDefault(x => x.GroupId == groupId).Id;
                 ViewBag.GroupChat = db.GroupChat.Where(x => x.addGroupChatId == groupId).ToList();
                 ViewBag.AddGroupChat = db.AddGroupChat.Where(x => x.GroupId == groupId&&x.Name!=null).ToList();
+                ViewBag.Mute = db.AddGroupChat.Where(x=> x.Role != "Mute" && x.userId == idd).ToList();
                 ViewBag.Users = db.Users.ToList();
                 return View();
             }
@@ -298,10 +330,20 @@ namespace probnik.Controllers
                 db.GroupChat.Add(groupChat);
             }
             await db.SaveChangesAsync();
-            string messagee = "SUCCESS";
+            var messagee = "Succes";
             return Json(new { Messagee = messagee, System.Web.Mvc.JsonRequestBehavior.AllowGet });
 
         }
+        //[HttpDelete]
+        //public async Task<ActionResult> deleteGroupMessage(GroupChat groupChat, long id)
+        //{
+        //    db.GroupChat.Remove(groupChat);
+        //    await db.SaveChangesAsync();
+        //    string messagee = "SUCCESS";
+        //    return Json(new { Messagee = messagee, System.Web.Mvc.JsonRequestBehavior.AllowGet });
+        //    //return hC.Clients.All.SendAsync(groupChat);
+
+        //}
         public JsonResult getGroupMessage(long groupId)
         {
             var only = User.Identity.Name;
@@ -310,35 +352,7 @@ namespace probnik.Controllers
             chat = db.GroupChat.ToList();
             return Json(chat.Where(x => x.addGroupChatId == groupId));
         }
-        //[HttpPost]
-        //public async Task<IActionResult> GroupMessage(GroupChat groupChat, IFormFile uploadPhoto, IFormFile uploadVideo)
-        //{
-        //    if (uploadPhoto != null)
-        //    {
-        //        byte[] imageData = null;
-        //        // считываем переданный файл в массив байтов
-        //        using (var binaryReader = new BinaryReader(uploadPhoto.OpenReadStream()))
-        //        {
-        //            imageData = binaryReader.ReadBytes((int)uploadPhoto.Length);
-        //        }
-        //        // установка массива байтов
-        //        groupChat.Photo = imageData;
-        //    }
-        //    if (uploadVideo != null)
-        //    {
-        //        byte[] imageData = null;
-        //        // считываем переданный файл в массив байтов
-        //        using (var binaryReader = new BinaryReader(uploadVideo.OpenReadStream()))
-        //        {
-        //            imageData = binaryReader.ReadBytes((int)uploadVideo.Length);
-        //        }
-        //        // установка массива байтов
-        //        groupChat.Video = imageData;
-        //    }
-        //    db.GroupChat.Add(groupChat);
-        //    await db.SaveChangesAsync();
-        //    return RedirectToAction("Index");
-        //}
+        
         public async Task<IActionResult> DeleteGroupMessage(long? id)
         {
             if (id != null)

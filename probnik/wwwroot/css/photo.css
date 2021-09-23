@@ -184,7 +184,7 @@
 
 .product-wrapper {
     display: block;
-    width: 100%;
+    width: 90%;
     float: left;
     transition: width .2s;
 }

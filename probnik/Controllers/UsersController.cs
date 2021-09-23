@@ -11,7 +11,7 @@ using Microsoft.AspNetCore.Http;
 
 namespace probnik.Controllers
 {
-    [Authorize(Roles = "admin")]
+    [Authorize(Roles ="admin")]
     public class UsersController : Controller
     {
         UserManager<User> _userManager;

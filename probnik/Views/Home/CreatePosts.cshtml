@@ -10,7 +10,7 @@
     int k = 0;
     int c = 0;
 }
-<form asp-action="CreatePosts" asp-controller="home" enctype="multipart/form-data">
+<form asp-action="CreatePosts" asp-controller="home" asp-route-userId="@mid" enctype="multipart/form-data">
     <div hidden class="form-group">
         <label asp-for="UserId" class="control-label">id</label>
         <input type="text" asp-for="UserId" value="@idd" class="form-control" />

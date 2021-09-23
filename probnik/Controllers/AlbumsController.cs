@@ -132,19 +132,6 @@ namespace probnik.Controllers
             }
             return NotFound();
         }
-        [HttpGet]
-        [ActionName("DeletePhotos")]
-        public async Task<IActionResult> ConfirmDeletePhotos(int? id)
-        {
-            if (id != null)
-            {
-                Photos photos = await db.Photos.FirstOrDefaultAsync(p => p.Id == id);
-                if (photos != null)
-                    return View(photos);
-            }
-            return NotFound();
-        }
-
         [HttpPost]
         public async Task<IActionResult> DeletePhotos(int? id)
         {
