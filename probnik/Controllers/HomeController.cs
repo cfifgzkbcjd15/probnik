@@ -69,7 +69,6 @@ namespace probnik.Controllers
                 ViewBag.Photos = db.Photos.ToList();
                 ViewBag.Posts = db.Posts.Where(x => x.To == id).ToList();
                 ViewBag.Likes = db.LikesPosts.ToList();
-                var list = db.Posts.Where(x => x.To == id).ToList();
                 ViewBag.Mid = id;
                 ViewBag.Comments = db.Comments.ToList();
                 ViewBag.User = db.Users.Where(x => x.Email == User.Identity.Name).ToList();
