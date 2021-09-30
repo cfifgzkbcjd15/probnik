@@ -7,14 +7,19 @@
     var only = User.Identity.Name;
 }
 <style>
-    a img {
+    td img {
         width: 55px;
         height: 55px;
-        min-width: 10%;
-        min-height: 10%;
-        max-width: 40%;
-        max-height: 12%;
         border-radius: 35px;
+    }
+    @@media(max-width:450px) {
+            td img {
+                width: 15px;
+                height: 15px;
+            }
+            td{
+                width:20px;
+            }
     }
 </style>
 <link rel="stylesheet" href="~/css/photo.css" />
@@ -31,7 +36,7 @@
         if (i.Email != "admin@mail.com"&&i.Email!=only)
             @if (i.Photo != null)
             {
-                <tr><td><a asp-action="UserId" asp-controller="Home" asp-route-id="@i.Id"><img  src="data:image/jpeg;base64,@(Convert.ToBase64String(i.Photo))" /><br />@i.Name</a></td><td align="right"><a asp-action="Message" asp-controller="Messages" asp-route-id="@i.Id" asp-route-Email="@i.Email" asp-route-name="@i.Name">Написать</a></td></tr>
+<tr><a asp-action="UserId" asp-controller="Home" asp-route-id="@i.Id"><td><img src="data:image/jpeg;base64,@(Convert.ToBase64String(i.Photo))" /></td><td>@i.Name</td></a><td align="right"><a asp-action="Message" asp-controller="Messages" asp-route-id="@i.Id" asp-route-Email="@i.Email" asp-route-name="@i.Name">Написать</a></td></tr>
             }
             else
             {

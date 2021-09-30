@@ -25,7 +25,7 @@
 
 .popup {
     top: -100%;
-    height: right: 0;
+    height: 0;
     left: 50%;
     font-size: 14px;
     z-index: 20;
@@ -182,12 +182,6 @@
     padding: 5px 0
 }
 
-.product-wrapper {
-    display: block;
-    width: 90%;
-    float: left;
-    transition: width .2s;
-}
 
 .product {
     display: block;

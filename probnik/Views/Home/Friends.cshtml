@@ -45,15 +45,15 @@
                     <td>
                         @if (j.Photo != null)
                         {
-                            <img style='width:50px; height:50px; border-radius:35px;' src="data:image/jpeg;base64,@(Convert.ToBase64String(j.Photo))" />
-                        }
-                        else
-                        {
+                        <a asp-action="UserId" asp-controller="Home" asp-route-id="@j.Id"><img style='width:50px; height:50px; border-radius:35px;' src="data:image/jpeg;base64,@(Convert.ToBase64String(j.Photo))" /></a>
+                            }
+                            else
+                            {
                             <img style='width:50px; height:50px; border-radius:35px;' src="https://tib.tomsk.ru/upload/iblock/9bb/9bba32393645786f73bbc55c98aa138e.jpg" />
 
-                        }
-                    </td>
-                    <td align="center" width="100%">@j.Name </td>
+                            }
+</td>
+                    <td align="center" width="100%"><a asp-action="UserId" asp-controller="Home" asp-route-id="@j.Id">@j.Name</a> </td>
                     <td><a asp-action="Message" asp-controller="Messages" asp-route-id="@j.Id" asp-route-name="@j.Name" asp-route-Email="@j.Email" asp-route-photo="@j.Photo">Написать</a></td>
                 </tr>
             }

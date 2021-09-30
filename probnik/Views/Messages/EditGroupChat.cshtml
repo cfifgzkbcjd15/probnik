@@ -42,68 +42,122 @@
     </div>
 </form>
 <h2 align="center">Пользователи</h2>
+
 @foreach (var i in addGroupChat)
 {
-    <form asp-controller="Messages" asp-action="DeleteUsersChat" method="post">
-        <table>
-            <tr>
-                <td>@i.user.Name</td>
+    <table>
+        <tr class="incol">
+            @foreach(var j in users.Where(x=>x.Id==i.userId)) {
+            <td>
+                @if (j.Photo != null)
+                {
+                    <img style='width:50px; height:50px; border-radius:35px;' src="data:image/jpeg;base64,@(Convert.ToBase64String(j.Photo))" />
+                }
+                else
+                {
+                    <img style='width:50px; height:50px; border-radius:35px;' src="https://tib.tomsk.ru/upload/iblock/9bb/9bba32393645786f73bbc55c98aa138e.jpg" />
+
+                }
+            </td>
+            }
+            <td width="90%">@i.user.Name</td>
+            @if (Model.userId == idd && Model.Role == "Создатель")
+            {
+
+
                 <td><input hidden name="Id" type="text" value="@i.Id" /></td>
-                <td>
-                    <input type="submit" class="btn btn-default" value="Удалить" />
+                <td width="100%" >
+                    <form asp-controller="Messages" asp-action="DeleteUsersChat" asp-route-id="@i.Id" method="post">
+                        <input hidden id="upload-file__del_@i.Id"  type="submit" value="Удалить" />
+                        <label class="upload-file__label" for="upload-file__del_@i.Id">
+                            <i class="fas fa-user-slash"></i>
+                        </label>
+                    </form>
                 </td>
-            </tr>
-            
-        </table>
-    </form>
+                <td width="95%" align="center">
+                    <form asp-controller="Messages" asp-action="editRole" asp-route-id="@i.Id" method="post">
+                        <input hidden id="upload-file__mute_@i.Id" type="submit" value="Mute" />
+                        <label class="upload-file__label" for="upload-file__mute_@i.Id">
+                            <i class="fas fa-comment-slash"></i>
+                        </label>
+                    </form>
+                </td>
+
+            }
+        </tr>
+    </table>
 }
 
-    <div class="vcenter">
-        <ul class="products clearfix">
-            <div id="example_1" display:block;">
-            <li class="product-wrapper">
-                <div class="thumbnail">
-                    <div class="sizee">
-                        <a href="#win 1"><p>Добавить новых участников беседы</p></a>
-                    </div>
-                    <!-- Модальное окно №5 -->
-                    <a href="#x" class="overlay" id="win 1"></a>
-                    <div id="element" class="popup" style="border-color: rgba(128, 128, 255,0.3); height: 100%; overflow-y: scroll;">
-                        <br />
-                        <form asp-action="AddUserChat" asp-controller="Messages" enctype="multipart/form-data">
-                            <div>
+<div class="vcenter">
+    <ul class="products clearfix">
+        <div id="example_1" display:block;">
+        <li class="product-wrapper">
+            <div class="thumbnail">
+                <div class="sizee">
+                    <a href="#win 1"><p>Добавить новых участников беседы</p></a>
+                </div>
+                <!-- Модальное окно №5 -->
+                <a href="#x" class="overlay" id="win 1"></a>
+                <div id="element" class="popup" style="border-color: rgba(128, 128, 255,0.3); height: 100%; overflow-y: scroll;">
+                    <br />
+                    <form asp-action="AddUserChat" asp-controller="Messages" enctype="multipart/form-data">
+                        <div>
+                            <table>
                                 @foreach (var i in friends)
                                 {
                                     foreach (var j in userss.Where(x => (x.Id == i.Sender || x.Id == i.Recipient) && x.AddGroupChats == null))
                                     {
                                         a += 1;
-                                        <label class="control-label">@j.Name</label>
-                                        <input type="checkbox" name="addUserChat[@a].userId" value="@j.Id" class="form-control" />
-                                        <input hidden name="addUserChat[@a].GroupId" value="@groupId" class="form-control" />
+                                        <tr>
+                                            <td>
+                                                @if (j.Photo != null)
+                                                {
+                                                    <img style='width:50px; height:50px; border-radius:35px;' src="data:image/jpeg;base64,@(Convert.ToBase64String(j.Photo))" />
+                                                }
+                                                else
+                                                {
+                                                    <img style='width:50px; height:50px; border-radius:35px;' src="https://tib.tomsk.ru/upload/iblock/9bb/9bba32393645786f73bbc55c98aa138e.jpg" />
+
+                                                }
+                                            </td>
+                                            <td width="87%">
+                                                <label class="control-label">@j.Name</label>
+                                            </td>
+                                            <td width="80%">
+                                                <input type="checkbox" name="addUserChat[@a].userId" value="@j.Id" class="form-control" />
+                                                <input hidden name="addUserChat[@a].GroupId" value="@groupId" class="form-control" />
+                                            </td>
+
+                                        </tr>
+                                        <br />
+
+
                                     }
-                                    //}
                                 }
-                                <div class="form-group">
-                                    <input type="submit" value="Сохранить" class="btn btn-default" />
-                                </div>
+
+                            </table>
+                            <br />
+                            <div align="center" class="form-group">
+                                <input  type="submit" value="Сохранить" class="btn btn-default" />
                             </div>
-                        </form>
-                        <div class="desk">
-                            <ul id="menu">
-                                <li></li>
                         </div>
-                        <a class="close" style="top: 0%;right: 0%;border-radius: 18px;" title="Закрыть" href="#close"></a>
+                    </form>
+                    <div class="desk">
+                        <ul id="menu">
+                            <li></li>
                     </div>
-                    <div class="caption">
-                        <h3>
-                            <a href="#"></a>
-                        </h3>
-                        <p></p>
-                    </div>
+                    <a class="close" style="top: 0%;right: 0%;border-radius: 18px;" title="Закрыть" href="#close"></a>
                 </div>
-            </li>
-    </div>
+                <div class="caption">
+                    <h3>
+                        <a href="#"></a>
+                    </h3>
+                    <p></p>
+                </div>
+            </div>
+        </li>
+</div>
     </ul>
 
     </div>
-    <link rel="stylesheet" href="~/css/photo.css" />
+<link rel="stylesheet" href="~/css/photo.css" />

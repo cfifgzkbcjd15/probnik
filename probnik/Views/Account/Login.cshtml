@@ -1,4 +1,7 @@
 @model probnik.ViewModels.LoginViewModel
+@{
+    ViewBag.Title = "Вход";
+}
 <style>
     input:focus {
         border-color: none;
@@ -48,10 +51,10 @@
                 </div>
             </span>
         </div>
-                        <div>
-                            <input type="submit" value="Войти" />
-                        </div>
-                        <a style="" asp-controller="Account" asp-action="Register">Регистрация</a>
-</form>
+        <div>
+            <input type="submit" value="Войти" />
+        </div>
+        <a style="" asp-controller="Account" asp-action="Register">Регистрация</a>
+    </form>
 </center>
 

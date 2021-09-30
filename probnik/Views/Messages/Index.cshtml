@@ -67,10 +67,11 @@
                                     @groupChat.LastOrDefault(x => x.addGroupChatId == i.Id).Message
                                 </a>
                             }
-                        else {
-                            <a style="background:white" asp-action="GroupMessage" asp-controller="Messages" asp-route-groupId="@i.GroupId" asp-route-Name="@i.Name">
-                                Нет сообщений
-                            </a>
+                            else
+                            {
+                                <a style="background:white" asp-action="GroupMessage" asp-controller="Messages" asp-route-groupId="@i.GroupId" asp-route-Name="@i.Name">
+                                    Нет сообщений
+                                </a>
                             }
 
                         </td>
@@ -80,40 +81,41 @@
             }
         }
         <p align="center">Сообщения</p>
-                @foreach (var i in Model.User)
-                {
+        @foreach (var i in Model.User)
+        {
+            foreach (var j in message.Where(x => x.id == idd && x.Fromm == i.Email || x.id == i.Id && x.Fromm == only).Take(1))
+            {
+                <tr style="border: 3px solid #d3fcff;">
+                    <td>
 
-                    <tr style="border: 3px solid #d3fcff;">
-                        <td>
+                        <a asp-action="UserId" asp-controller="Home" asp-route-id="@i.Id">
+                            @if (i.Photo != null)
+                            {
+                                <img style='width:50px; height:50px; border-radius:35px;' src="data:image/jpeg;base64,@(Convert.ToBase64String(i.Photo))" />
+                            }
+                            else
+                            {
+                                <img style='width:50px; height:50px; border-radius:35px;' src="https://tib.tomsk.ru/upload/iblock/9bb/9bba32393645786f73bbc55c98aa138e.jpg" />
 
-                            <a asp-action="UserId" asp-controller="Home" asp-route-id="@i.Id">
-                                @if (i.Photo != null)
-                                {
-                                    <img style='width:50px; height:50px; border-radius:35px;' src="data:image/jpeg;base64,@(Convert.ToBase64String(i.Photo))" />
-                                }
-                                else
-                                {
-                                    <img style='width:50px; height:50px; border-radius:35px;' src="https://tib.tomsk.ru/upload/iblock/9bb/9bba32393645786f73bbc55c98aa138e.jpg" />
+                            }
+                        </a>
 
-                                }
-                            </a>
+                    </td>
+                    <td style="width: 100%;">
+                        <a asp-action="Message" asp-controller="Messages" asp-route-id="@i.Id" asp-route-name="@i.Name" asp-route-Email="@i.Email" asp-route-photo="@i.Photo">
+                            @i.Name
 
-                        </td>
-                        <td style="width: 100%;">
-                            <a asp-action="Message" asp-controller="Messages" asp-route-id="@i.Id" asp-route-name="@i.Name" asp-route-Email="@i.Email" asp-route-photo="@i.Photo">
-                                @i.Name
+                        </a>
+                        <a style="background:white;border-radius:2px;" asp-action="Message" asp-controller="Messages" asp-route-id="@i.Id" asp-route-name="@i.Name" asp-route-Email="@i.Email" asp-route-photo="@i.Photo">
+                            @Model.User.LastOrDefault(x => x.Email == message.LastOrDefault(x => x.id == idd && x.Fromm == i.Email || x.id == i.Id && x.Fromm == only).Fromm).Name @message.LastOrDefault(x => x.id == idd && x.Fromm == i.Email || x.id == i.Id && x.Fromm == only).Date.ToString("dd MMMM H:mm")
+                            <br />
+                            @message.LastOrDefault(x => x.id == idd && x.Fromm == i.Email || x.id == i.Id && x.Fromm == only).Message
+                        </a>
+                    </td>
 
-                            </a>
-                            @*<a style="background:white;border-radius:2px;" asp-action="Message" asp-controller="Messages" asp-route-id="@i.Id" asp-route-name="@i.Name" asp-route-Email="@i.Email" asp-route-photo="@i.Photo">
-                                    @Model.User.LastOrDefault(x => x.Email == message.LastOrDefault(x => x.id == i.Id || x.Fromm == i.Email).Fromm).Name @j.Date.ToString("dd MMMM HH:mm")
-                                    <br />
-                                    @message.LastOrDefault(x => x.id == i.Id || x.Fromm == i.Email).Message
-                                </a>*@
-                        </td>
-
-                    </tr>
+                </tr>
+                }
             }
-
     </table>
 </div>
 <script src="~/lib/jquery/dist/jquery.js"></script>
@@ -121,8 +123,11 @@
 @section Scripts
 {
     <script>
-                                                                            //setTimeout(function () {
-                                                                            //    window.location.reload(1);
-                                                                            //}, 7500);
+      setTimeout(function () {
+          window.location.reload(1);
+      }, 8500);
+        function isChecked(id) {
+            return checkedStudents.find((item) => item === id);
+        }
     </script>
 }

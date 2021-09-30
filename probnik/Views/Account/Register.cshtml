@@ -1,5 +1,14 @@
 @model probnik.ViewModels.RegisterViewModel
+@{
+    ViewBag.Title = "Регистрация";
+}
+<style>
+    input[type='file'] {
+        color: transparent;
+    }
+</style>
 <h2>Регистрация нового пользователя</h2>
+
 <form method="post" asp-controller="Account" asp-action="Register" enctype="multipart/form-data">
     <div asp-validation-summary="ModelOnly"></div>
     <div>
@@ -9,7 +18,7 @@
     </div>
     <div>
         <label asp-for="Photo"></label><br />
-        <input type="file" name="file" asp-for="Photo"/>
+        <input type="file" name="file" asp-for="Photo" />
         <span asp-validation-for="Photo"></span>
     </div>
     <div>
@@ -22,6 +31,7 @@
         <input type="date" asp-for="Year" />
         <span asp-validation-for="Year"></span>
     </div>
+    <br />
     <div>
         <label asp-for="PhoneNumber"></label><br />
         <input asp-for="PhoneNumber" />

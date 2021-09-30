@@ -5,6 +5,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"] - probnik</title>
@@ -18,7 +19,9 @@
     a {
         color: rgb(108 108 255);
     }
-
+    input[type='file'] {
+        color: transparent;
+    }
     .container a {
         text-decoration: none;
     }
@@ -63,6 +66,14 @@
     body {
         font-size: 15px;
     }
+    input[type=submit] {
+        border-radius: 10px;
+        border-color: rgba(128, 128, 255,0.3);
+        background: rgba(128 128 255 / 15%);
+        justify-content: center;
+        display: flex;
+        flex-flow: row wrap;
+    }
 
     @@media (max-width:600px) {
         body {
@@ -87,12 +98,25 @@
         .bokmenu {
             font-size: 8px;
         }
+        input[type=submit] {
+            width: 40px;
+            height: 20px;
+            font-size: 7px;
+        }
     }
 
-    @@media (max-width:400px) {
+    @@media (max-width:490px) {
         .bokmenu {
             left: 15px;
             width: 18%;
+        }
+        h2{
+            font-size:15px;
+        }
+        input[type=submit] {
+            width: 30px;
+            height: 15px;
+            font-size: 5px;
         }
     }
     }
