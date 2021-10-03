@@ -14,6 +14,7 @@ namespace probnik.Hubs
     {
         public async  Task sendMessage(Messages msg)
         {
+            await Clients.All.SendAsync("ReceiveMessage", msg);
         }
     }
 }

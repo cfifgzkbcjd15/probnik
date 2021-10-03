@@ -12,14 +12,22 @@
         height: 55px;
         border-radius: 35px;
     }
+
+    table {
+        border-spacing: 0;
+        border-collapse: collapse;
+    }
+
+    td, th {
+        padding: 0;
+        text-align: center;
+    }
+
     @@media(max-width:450px) {
-            td img {
-                width: 15px;
-                height: 15px;
-            }
-            td{
-                width:20px;
-            }
+        td img {
+            width: 15px;
+            height: 15px;
+        }
     }
 </style>
 <link rel="stylesheet" href="~/css/photo.css" />
@@ -33,15 +41,42 @@
     <tr><td colspan="2" align="center">Пользователи</td></tr>
     @foreach (var i in Model.Distinct())
     {
-        if (i.Email != "admin@mail.com"&&i.Email!=only)
+        if (i.Email != "admin@mail.com" && i.Email != only)
             @if (i.Photo != null)
             {
-<tr><a asp-action="UserId" asp-controller="Home" asp-route-id="@i.Id"><td><img src="data:image/jpeg;base64,@(Convert.ToBase64String(i.Photo))" /></td><td>@i.Name</td></a><td align="right"><a asp-action="Message" asp-controller="Messages" asp-route-id="@i.Id" asp-route-Email="@i.Email" asp-route-name="@i.Name">Написать</a></td></tr>
+                <tr>
+                    <td>
+                        <a asp-action="UserId" asp-controller="Home" asp-route-id="@i.Id">
+                            <img src="data:image/jpeg;base64,@(Convert.ToBase64String(i.Photo))" />
+                        </a>
+                    </td>
+                    <td>
+                        <a asp-action="UserId" asp-controller="Home" asp-route-id="@i.Id">
+                            @i.Name
+                        </a>
+                    </td>
+                    <td align="right">
+                        <a asp-action="Message" asp-controller="Messages" asp-route-id="@i.Id" asp-route-Email="@i.Email" asp-route-name="@i.Name">Написать</a>
+                    </td>
+                </tr>
             }
+
             else
             {
-                <tr><td><a asp-action="UserId" asp-controller="Home" asp-route-id="@i.Id"><img  src="https://cdn.pixabay.com/photo/2012/04/26/19/43/profile-42914_1280.png" /><br />@i.Name</a></td><td align="right"><a asp-action="Message" asp-controller="Messages" asp-route-id="@i.Id" asp-route-Email="@i.Email" asp-route-name="@i.Name">Написать</a></td></tr>
-                
+                <tr>
+                    <td>
+                        <a asp-action="UserId" asp-controller="Home" asp-route-id="@i.Id">
+                            <img src="https://cdn.pixabay.com/photo/2012/04/26/19/43/profile-42914_1280.png" />
+                        </a>
+                    </td>
+                    <td>
+                        <a asp-action="UserId" asp-controller="Home" asp-route-id="@i.Id">
+                            @i.Name
+                            </a>
+                    </td>
+                    <td align="right"><a asp-action="Message" asp-controller="Messages" asp-route-id="@i.Id" asp-route-Email="@i.Email" asp-route-name="@i.Name">Написать</a></td>
+                </tr>
+
             }
         }
 </table>

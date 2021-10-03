@@ -26,6 +26,22 @@
     .alignright {
         float: right;
     }
+
+    img {
+        width: 50px;
+        height: 50px;
+        border-radius: 35px;
+    }
+    table {
+        border-spacing: 0px;
+        border-collapse: collapse;
+    }
+    @@media (max-width:490px) {
+        img {
+            width: 30px;
+            height: 30px;
+        }
+    }
 </style>
 <a asp-action="AddGroupChat" asp-controller="Messages">Групповой чат</a>
 
@@ -42,11 +58,11 @@
                             <a asp-action="GroupMessage" asp-controller="Messages" asp-route-groupId="@i.GroupId" asp-route-Name="@i.Name">
                                 @if (i.Photo != null)
                                 {
-                                    <img style='width:50px; height:50px; border-radius:35px;' src="data:image/jpeg;base64,@(Convert.ToBase64String(i.Photo))" />
+                                    <img src="data:image/jpeg;base64,@(Convert.ToBase64String(i.Photo))" />
                                 }
                                 else
                                 {
-                                    <img style='width:50px; height:50px; border-radius:35px;' src="https://tib.tomsk.ru/upload/iblock/9bb/9bba32393645786f73bbc55c98aa138e.jpg" />
+                                    <img  src="https://tib.tomsk.ru/upload/iblock/9bb/9bba32393645786f73bbc55c98aa138e.jpg" />
 
                                 }
 
@@ -85,17 +101,17 @@
         {
             foreach (var j in message.Where(x => x.id == idd && x.Fromm == i.Email || x.id == i.Id && x.Fromm == only).Take(1))
             {
-                <tr style="border: 3px solid #d3fcff;">
+                <tr style="border: 3px solid #d3fcff; width: 100%;">
                     <td>
 
                         <a asp-action="UserId" asp-controller="Home" asp-route-id="@i.Id">
                             @if (i.Photo != null)
                             {
-                                <img style='width:50px; height:50px; border-radius:35px;' src="data:image/jpeg;base64,@(Convert.ToBase64String(i.Photo))" />
+                                <img src="data:image/jpeg;base64,@(Convert.ToBase64String(i.Photo))" />
                             }
                             else
                             {
-                                <img style='width:50px; height:50px; border-radius:35px;' src="https://tib.tomsk.ru/upload/iblock/9bb/9bba32393645786f73bbc55c98aa138e.jpg" />
+                                <img  src="https://tib.tomsk.ru/upload/iblock/9bb/9bba32393645786f73bbc55c98aa138e.jpg" />
 
                             }
                         </a>

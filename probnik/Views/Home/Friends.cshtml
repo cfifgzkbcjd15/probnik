@@ -7,33 +7,88 @@
     var user = ViewBag.User as List<User>;
     var friends = ViewBag.Friends as List<Friends>;
 }
+<style>
+    img{
+        width:50px;
+        height:50px;
+        border-radius:35px;
+    }
+    input[type=submit] {
+        width:70%;
+    }
+    @@media(max-width:762px) {
+        input[type=submit] {
+            width: 70%;
+            font-size:7px;
+        }
+    }
+    @@media(max-width:450px) {
+        img {
+            width: 20px;
+            height: 20px;
+            border-radius: 35px;
+        }
+        table {
+            border-spacing: 0;
+            border-collapse: collapse;
+        }
+
+        td, th {
+            padding: 4px;
+            text-align: center;
+        }
+    }
+</style>
 <center>
     @if (friends.Count != 0)
     {
         <h2>Заявки в друзья</h2>
-        <form asp-action="EditFriends" asp-controller="home">
-            @foreach (var j in user.Where(x => x.Id == friends.Last().Sender))
-            {
-                <p>@j.Name</p>
-            }
-            <input hidden name="id" value="@friends.Last().Id" />
-            <input hidden name="sender" value="@friends.Last().Sender" />
-            <input hidden name="recipient" value="@idd" />
-            <input hidden name="confirmation" value="true" />
-            <div>
-                <input type="submit" value="Добавить в друзья" class="btn btn-default" />
-            </div>
-        </form>
+        <div style="border:3px solid #aba8ffb3">
+            <table>
+                <tr>
+                    <td  align="center">
+                        @foreach (var j in user.Where(x => x.Id == friends.Last().Sender))
+                        {
+                            @if (j.Photo != null)
+                            {
+                        <a asp-action="UserId" asp-controller="Home" asp-route-id="@j.Id">
+                            <img src="data:image/jpeg;base64,@(Convert.ToBase64String(j.Photo))" />
+                            <p>@j.Name</p>
+                        </a>
+                            }
+                            else
+                            {
+                    <a asp-action="UserId" asp-controller="Home" asp-route-id="@j.Id">
+                        <img src="https://cdn.pixabay.com/photo/2012/04/26/19/43/profile-42914_1280.png" />
+                        <p>@j.Name</p>
+                    </a>
 
-        <form asp-controller="Home" asp-action="reject_addition" method="post">
-            <input hidden name="id" value="@friends.Last().Id" />
-            <input hidden name="sender" value="@friends.Last().Sender" />
-            <input hidden name="recipient" value="@idd" />
-            <input hidden name="confirmation" value="true" />
-            <div class="form-group">
-                <input type="submit" class="btn btn-default" value="Отклонить добавление" />
-            </div>
-        </form>
+                    }
+                        }
+                        </td>
+                        <td  width="80%" align="right">
+                            <form asp-action="EditFriends" asp-controller="home">
+                                <input hidden name="id" value="@friends.Last().Id" />
+                                <input hidden name="sender" value="@friends.Last().Sender" />
+                                <input hidden name="recipient" value="@idd" />
+                                <input hidden name="confirmation" value="true" />
+                                <div>
+                                    <input type="submit" value="Добавить в друзья" class="btn btn-default" />
+                                </div>
+                            </form>
+                            <form asp-controller="Home" asp-action="reject_addition" method="post">
+                                <input hidden name="id" value="@friends.Last().Id" />
+                                <input hidden name="sender" value="@friends.Last().Sender" />
+                                <input hidden name="recipient" value="@idd" />
+                                <input hidden name="confirmation" value="true" />
+                                <div class="form-group">
+                                    <input type="submit" class="btn btn-default" value="Отклонить добавление" />
+                                </div>
+                            </form>
+                        </td>
+                        </tr>
+                    </table>
+        </div>
     }
     <h2>Друзья</h2>
     <table width="60%">
@@ -45,11 +100,11 @@
                     <td>
                         @if (j.Photo != null)
                         {
-                        <a asp-action="UserId" asp-controller="Home" asp-route-id="@j.Id"><img style='width:50px; height:50px; border-radius:35px;' src="data:image/jpeg;base64,@(Convert.ToBase64String(j.Photo))" /></a>
+                        <a asp-action="UserId" asp-controller="Home" asp-route-id="@j.Id"><img  src="data:image/jpeg;base64,@(Convert.ToBase64String(j.Photo))" /></a>
                             }
                             else
                             {
-                            <img style='width:50px; height:50px; border-radius:35px;' src="https://tib.tomsk.ru/upload/iblock/9bb/9bba32393645786f73bbc55c98aa138e.jpg" />
+                            <img  src="https://tib.tomsk.ru/upload/iblock/9bb/9bba32393645786f73bbc55c98aa138e.jpg" />
 
                             }
 </td>

@@ -182,6 +182,12 @@
     padding: 5px 0
 }
 
+.product-wrapper {
+    display: block;
+    width: 90%;
+    float: left;
+    transition: width .2s;
+}
 
 .product {
     display: block;

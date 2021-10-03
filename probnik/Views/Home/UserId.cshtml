@@ -17,7 +17,6 @@
     var likes = ViewBag.Likes as List<LikesPosts>;
     int year = 2021;
 }
-
 <style>
     .verticalLine {
         border: 1px solid #ebf3f5;
@@ -53,7 +52,7 @@
         }
     }
 </style>
-<link rel="stylesheet" href="~/css/photo.css" />
+
 @if (idd == mid)
 {
     <a asp-action="EditUser" asp-route-id="@idd">Редактировать</a>
@@ -267,3 +266,4 @@
         }
     }
     </center>
+<link rel="stylesheet" href="~/css/photo.css"/>

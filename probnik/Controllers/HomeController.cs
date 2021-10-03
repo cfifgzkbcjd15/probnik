@@ -326,7 +326,7 @@ namespace probnik.Controllers
             Friends friends = new Friends() { Sender = sender, Recipient = recipient, Confirmation = confirmation };
             db.Friends.Add(friends);
             await db.SaveChangesAsync();
-            return RedirectToAction("Index");
+            return RedirectToAction("Friends");
         }
         [HttpPost]
         public async Task<IActionResult> EditFriends(long id, string sender, string recipient, string confirmation)
@@ -334,7 +334,7 @@ namespace probnik.Controllers
             Friends friends = new Friends() { Id = id, Sender = sender, Recipient = recipient, Confirmation = confirmation };
             db.Friends.Update(friends);
             await db.SaveChangesAsync();
-            return RedirectToAction("Index");
+            return RedirectToAction("Friends");
         }
         [HttpPost]
         public async Task<IActionResult> reject_addition(long? id)
@@ -346,7 +346,7 @@ namespace probnik.Controllers
                 {
                     db.Friends.Update(friends);
                     await db.SaveChangesAsync();
-                    return RedirectToAction("Index");
+                    return RedirectToAction("Friends");
                 }
             }
             return NotFound();
