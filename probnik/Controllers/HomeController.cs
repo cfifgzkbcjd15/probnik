@@ -57,7 +57,7 @@ namespace probnik.Controllers
             return View(source);
         }
 
-        public async Task<IActionResult> UserId(string? id, string Email)
+        public async Task<IActionResult> UserId(string id,string name)
         {
             if (id != null)
             {
@@ -67,52 +67,120 @@ namespace probnik.Controllers
                 var idd = User.FindFirstValue(ClaimTypes.NameIdentifier);
                 ViewBag.Albums = db.Albums.Where(x => x.UserId == id).ToList();
                 ViewBag.Photos = db.Photos.ToList();
-                ViewBag.Posts = db.Posts.Where(x => x.To == id).ToList();
+                ViewBag.Posts = db.Posts.Where(x => x.To == id).OrderByDescending(x=>x.Id).ToList();
                 ViewBag.Likes = db.LikesPosts.ToList();
                 ViewBag.Mid = id;
+                ViewBag.Name = name;
                 ViewBag.Comments = db.Comments.ToList();
-                ViewBag.User = db.Users.Where(x => x.Email == User.Identity.Name).ToList();
+                ViewBag.User = db.Users.ToList();
                 ViewBag.UserId = db.Users.Where(x => x.Id == id).ToList();
+
                 if (user != null)
                     return View();
             }
             return NotFound("Страница удалена");
         }
         [HttpPost]
-        public async Task<IActionResult> UserId(CommentsViewModels cvm, Comments comment,string userId)
+        public async Task<IActionResult> UserId(Comments comment,string userId,IFormFile photo, IFormFile video, IFormFile music)
         {
-            if (cvm.Photo != null)
+            var idd = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            comment.Data = DateTime.Now;
+            foreach(var i in db.Users.Where(x => x.Id == idd).ToList())
             {
-                byte[] imageData = null;
-                // считываем переданный файл в массив байтов
-                using (var binaryReader = new BinaryReader(cvm.Photo.OpenReadStream()))
-                {
-                    imageData = binaryReader.ReadBytes((int)cvm.Photo.Length);
-                }
-                // установка массива байтов
-                comment.Photo = imageData;
+                comment.Name = i.Name;
             }
-            if (cvm.Video != null)
+            List<string> png = "89 50 4E 47".Split().ToList();
+            List<string> jpg = "FF D8 FF DB".Split().ToList();
+            List<string> jpeg = "FF D8 FF E0".Split().ToList();
+            List<string> mp4 = "00 00 00 18".Split().ToList();
+            List<string> mp3 = "49 44 33".Split().ToList();
+            List<string> fileHead = new List<string>();
+            if (photo != null)
             {
+
+                using (var binaryReader = new BinaryReader(photo.OpenReadStream()))
+                {
+                    for (int i = 0; i < 4; i++)
+                    {
+                        string bit = binaryReader.ReadByte().ToString("X2");
+                        fileHead.Add(bit);
+                    }
+                }
                 byte[] imageData = null;
                 // считываем переданный файл в массив байтов
-                using (var binaryReader = new BinaryReader(cvm.Video.OpenReadStream()))
+                using (var binaryReader = new BinaryReader(photo.OpenReadStream()))
                 {
-                    imageData = binaryReader.ReadBytes((int)cvm.Video.Length);
+                    imageData = binaryReader.ReadBytes((int)photo.Length);
                 }
-                // установка массива байтов
-                comment.Video = imageData;
+                if (!png.Except(fileHead).Any())
+                {
+                    comment.Photo = imageData;
+                }
+                if (!jpg.Except(fileHead).Any())
+                {
+                    comment.Photo = imageData;
+                }
+                if (!jpeg.Except(fileHead).Any())
+                {
+                    comment.Photo = imageData;
+                }
+                if (comment.Photo == null)
+                {
+                    return NotFound("не подходит под разрешение");
+                }
             }
-            if (cvm.Music != null)
+            if (video != null)
             {
+                using (var binaryReader = new BinaryReader(video.OpenReadStream()))
+                {
+                    for (int i = 0; i < 4; i++)
+                    {
+                        string bit = binaryReader.ReadByte().ToString("X2");
+                        fileHead.Add(bit);
+                    }
+                }
                 byte[] imageData = null;
                 // считываем переданный файл в массив байтов
-                using (var binaryReader = new BinaryReader(cvm.Music.OpenReadStream()))
+                using (var binaryReader = new BinaryReader(video.OpenReadStream()))
                 {
-                    imageData = binaryReader.ReadBytes((int)cvm.Music.Length);
+                    imageData = binaryReader.ReadBytes((int)video.Length);
                 }
                 // установка массива байтов
-                comment.Video = imageData;
+                if (!mp4.Except(fileHead).Any())
+                {
+                    comment.Video = imageData;
+                }
+                if (comment.Video == null)
+                {
+                    return NotFound("не подходит под разрешение");
+                }
+            }
+            if (music != null)
+            {
+                using (var binaryReader = new BinaryReader(music.OpenReadStream()))
+                {
+                    for (int i = 0; i < 4; i++)
+                    {
+                        string bit = binaryReader.ReadByte().ToString("X2");
+                        fileHead.Add(bit);
+                    }
+                }
+                byte[] imageData = null;
+                // считываем переданный файл в массив байтов
+                using (var binaryReader = new BinaryReader(music.OpenReadStream()))
+                {
+                    imageData = binaryReader.ReadBytes((int)music.Length);
+                }
+
+                // установка массива байтов
+                if (!mp3.Except(fileHead).Any())
+                {
+                    comment.Music = imageData;
+                }
+                if (comment.Music == null)
+                {
+                    return NotFound("не подходит под разрешение");
+                }
             }
             if (comment.Body != null)
             {
@@ -121,7 +189,7 @@ namespace probnik.Controllers
             await db.SaveChangesAsync();
             return RedirectToAction("UserId", "Home",new { userId });
         }
-        public IActionResult CreatePosts(string? id)
+        public IActionResult CreatePosts(string id)
         {
             if (id != null)
             {
@@ -129,45 +197,108 @@ namespace probnik.Controllers
                 ViewBag.Mid = id;
                 return View();
             }
+            
             return NotFound("ошибка");
         }
         [HttpPost]
-        public async Task<IActionResult> CreatePosts(PostsViewModel pvm, Posts posts, string Id)
+        public async Task<IActionResult> CreatePosts(Posts posts, string Id,IFormFile photo, IFormFile video, IFormFile music)
         {
             var idd = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            posts.To=Id;
+            posts.UserId = idd;
+            posts.Data = DateTime.Now;
+            List<string> png = "89 50 4E 47".Split().ToList();
+            List<string> jpg = "FF D8 FF DB".Split().ToList();
+            List<string> jpeg = "FF D8 FF E0".Split().ToList();
+            List<string> mp4 = "00 00 00 18".Split().ToList();
+            List<string> mp3 = "49 44 33".Split().ToList();
+            List<string> fileHead = new List<string>();
+            if (photo != null)
+            {
             
-            if (pvm.Photo != null)
+            using (var binaryReader = new BinaryReader(photo.OpenReadStream()))
             {
-                byte[] imageData = null;
-                // считываем переданный файл в массив байтов
-                using (var binaryReader = new BinaryReader(pvm.Photo.OpenReadStream()))
+                for (int i = 0; i < 4; i++)
                 {
-                    imageData = binaryReader.ReadBytes((int)pvm.Photo.Length);
+                    string bit = binaryReader.ReadByte().ToString("X2");
+                    fileHead.Add(bit);
                 }
-                // установка массива байтов
-                posts.Photo = imageData;
             }
-            if (pvm.Video != null)
-            {
                 byte[] imageData = null;
                 // считываем переданный файл в массив байтов
-                using (var binaryReader = new BinaryReader(pvm.Video.OpenReadStream()))
+                using (var binaryReader = new BinaryReader(photo.OpenReadStream()))
                 {
-                    imageData = binaryReader.ReadBytes((int)pvm.Video.Length);
+                    imageData = binaryReader.ReadBytes((int)photo.Length);
                 }
-                // установка массива байтов
-                posts.Video = imageData;
+                if (!png.Except(fileHead).Any())
+                {
+                    posts.Photo = imageData; 
+                }
+                if (!jpg.Except(fileHead).Any())
+                {
+                    posts.Photo = imageData;
+                }
+                if (!jpeg.Except(fileHead).Any())
+                {
+                    posts.Photo = imageData;
+                }
+                if (posts.Photo == null)
+                {
+                    return NotFound("не подходит под разрешение");
+                }
             }
-            if (pvm.Music != null)
+            if (video != null)
             {
+                using (var binaryReader = new BinaryReader(video.OpenReadStream()))
+                {
+                    for (int i = 0; i < 4; i++)
+                    {
+                        string bit = binaryReader.ReadByte().ToString("X2");
+                        fileHead.Add(bit);
+                    }
+                }
                 byte[] imageData = null;
                 // считываем переданный файл в массив байтов
-                using (var binaryReader = new BinaryReader(pvm.Music.OpenReadStream()))
+                using (var binaryReader = new BinaryReader(video.OpenReadStream()))
                 {
-                    imageData = binaryReader.ReadBytes((int)pvm.Music.Length);
+                    imageData = binaryReader.ReadBytes((int)video.Length);
                 }
                 // установка массива байтов
-                posts.Music = imageData;
+                if (!mp4.Except(fileHead).Any())
+                {
+                    posts.Video = imageData;
+                }
+                if (posts.Video== null)
+                {
+                    return NotFound("не подходит под разрешение");
+                }
+            }
+            if (music != null)
+            {
+                using (var binaryReader = new BinaryReader(music.OpenReadStream()))
+                {
+                    for (int i = 0; i < 4; i++)
+                    {
+                        string bit = binaryReader.ReadByte().ToString("X2");
+                        fileHead.Add(bit);
+                    }
+                }
+                byte[] imageData = null;
+                // считываем переданный файл в массив байтов
+                using (var binaryReader = new BinaryReader(music.OpenReadStream()))
+                {
+                    imageData = binaryReader.ReadBytes((int)music.Length);
+                }
+
+                // установка массива байтов
+                if (!mp3.Except(fileHead).Any())
+                {
+                    posts.Music = imageData;
+                }
+                if (posts.Music == null)
+                {
+                    return NotFound("не подходит под разрешение");
+                }
             }
             db.Posts.Add(posts);
             await db.SaveChangesAsync();
@@ -188,7 +319,7 @@ namespace probnik.Controllers
             return RedirectToAction("UserId"+userId);
         }
         [HttpPost]
-        public async Task<IActionResult> DeletePosts(int? id,string userId)
+        public async Task<IActionResult> DeletePosts(int id)
         {
             if (id != null)
             {
@@ -204,8 +335,7 @@ namespace probnik.Controllers
                     }
                     db.Posts.Remove(posts);
                     await db.SaveChangesAsync();
-                    userId = posts.UserId;
-                    return RedirectToAction("UserId", "Home", userId);
+                    return RedirectToAction("UserId", "Home", new { @id = posts.To });
                 }
             }
             return NotFound();
@@ -220,7 +350,7 @@ namespace probnik.Controllers
                 {
                     db.Comments.Remove(comments);
                     await db.SaveChangesAsync();
-                    return RedirectToAction("UserId",new { uss });
+                    return RedirectToAction(nameof(UserId), "Home", new { uss });
                     //return RedirectToRoute("default", new { controller="Home", action="UserId", userId });
                 }
             }

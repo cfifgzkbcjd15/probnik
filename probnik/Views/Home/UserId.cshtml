@@ -3,27 +3,38 @@
 @using System.Security.Claims;
 @model probnik.Data.Comments;
 @{
-    ViewData["Title"] = "Личный Кабинет";
+    var idd = User.FindFirstValue(ClaimTypes.NameIdentifier);
+    var mid = ViewBag.Mid;
+    var name = ViewBag.Name;
+    if (mid == idd)
+    {
+        ViewData["Title"] = "Моя страница";
+    }
+    else
+    {
+        ViewData["Title"] = name;
+    }
     var post = ViewBag.Posts as List<Posts>;
     var comment = ViewBag.Comments as List<Comments>;
     var user = ViewBag.User as List<User>;
-    var mid = ViewBag.Mid;
+
     var userId = ViewBag.UserId as List<User>;
     var only = User.Identity.Name;
-    var idd = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
     var albums = ViewBag.Albums as List<Albums>;
     var photos = ViewBag.Photos as List<Photos>;
     var friends = ViewBag.Friends as List<Friends>;
     var likes = ViewBag.Likes as List<LikesPosts>;
-    int year = 2021;
 }
 <style>
     .verticalLine {
         border: 1px solid #ebf3f5;
     }
+
     #element::-webkit-scrollbar {
         width: 0;
     }
+
     .photo {
         width: 100px;
         height: 100px;
@@ -34,6 +45,28 @@
         height: 90px;
     }
 
+    video {
+        width: 150px;
+        height: 150px;
+    }
+
+    .popup img {
+        width: 250px;
+        height: 250px;
+    }
+
+    .popup video {
+        width: 350px;
+        height: 250px;
+    }
+
+    .alignleft {
+        float: left;
+    }
+
+    .alignright {
+        float: right;
+    }
     @@media (max-width:600px) {
         img {
             width: 60px;
@@ -44,48 +77,69 @@
             width: 60px;
             height: 60px;
         }
-    }
 
-    @@media (max-width:600px) {
-        body {
-            font-size: 8px;
+        video {
+            width: 60px;
+            height: 60px;
+        }
+
+        h4 {
+            font-size: 14px;
+        }
+
+        .container {
+            font-size: 10px;
         }
     }
-</style>
+    div .aimg img{
+        width:150px;
+        height:150px;
 
+    }
+</style>
+<script>
+
+</script>
 @if (idd == mid)
 {
     <a asp-action="EditUser" asp-route-id="@idd">Редактировать</a>
 }
-<center>
+<table>
     @foreach (var i in userId)
     {
-        <h2> @i.Name</h2>
-        @if (i.Photo != null)
-        {
-            <img class="photo" style='width:120px; height:100px;' src="data:image/jpeg;base64,@(Convert.ToBase64String(i.Photo))" />
-        }
-        else
-        {
-            <img class="photo" style='width:120px; height:100px;' src="https://cdn.pixabay.com/photo/2012/04/26/19/43/profile-42914_1280.png" />
-        }
-        <br />
-        <p>Возраст: @(year-i.Year.Year)</p>
+    <tr>
+        <td>
+            <h2> @i.Name</h2>
+            @if (i.Photo != null)
+            {
+                <img class="photo" style='width:120px; height:100px;' src="data:image/jpeg;base64,@(Convert.ToBase64String(i.Photo))" />
+            }
+            else
+            {
+                <img class="photo" style='width:120px; height:100px;' src="https://cdn.pixabay.com/photo/2012/04/26/19/43/profile-42914_1280.png" />
+            }
+            <br />
+        </td>
+    <td>
+        <p>Возраст: @(DateTime.Now.Year-i.Year.Year)</p>
         <p>Почта: @i.Email</p>
-
+        </td>
+    </tr>
     }
+</table>
 
     @if (friends.Where(x => x.Sender == mid && x.Recipient == idd || x.Recipient == mid && x.Sender == idd).Count() == 0)
     {
-       if (mid != idd) {
-        <form asp-action="AddFriends" asp-controller="home">
-            <input hidden name="sender" value="@idd" />
-            <input hidden name="recipient" value="@mid" />
-            <input hidden name="confirmation" value="false" />
-            <div class="form-group">
-                <input style="color: white; background: #5fa6ff; width: 35%; " type="submit" value="Добавить в друзья" class="btn btn-default" />
-            </div>
-        </form>
+        if (mid != idd)
+        {
+            <form asp-action="AddFriends" asp-controller="home" align="center">
+                <input hidden name="sender" value="@idd" />
+                <input hidden name="recipient" value="@mid" />
+                <input hidden name="confirmation" value="false" />
+                <div class="form-group">
+                    <input style="color: white; background: #5fa6ff; width: 35%; " type="submit" value="Добавить в друзья" class="btn btn-default" />
+                </div>
+            </form>
         }
     }
     <a asp-action="UsersAlbums" asp-controller="albums" asp-route-userId="@mid">Фотографии</a>
@@ -102,41 +156,81 @@
 
 
 
-
-    <a asp-action="CreatePosts" asp-route-id="@mid">Добавить Новость</a>
-    <br />
-    <br />
-    @if (post != null)
-    {
-        foreach (var i in post)
+    <center>
+        <a asp-action="CreatePosts" asp-route-id="@mid">Добавить Новость</a>
+        <br />
+        <br />
+        @if (post != null)
         {
-            @if (comment != null && user.FirstOrDefault(x => x.Id == i.UserId) != null)
+            foreach (var i in post)
             {
+
                 <div style="border: 3px solid #ebf3f5; width: 70%">
                     <div style="border: 3px solid #ebf3f5">
-                        <ul class="products clearfix">
+                        <ul style="padding:0;" class="products clearfix">
                             <div id="example_@i.Id" display:block;">
-                            <li class="product-wrapper" style="width:90%">
+                            <li style="padding: 0; width: 100%" class="product-wrapper">
                                 <div class="thumbnail">
-                                    <div class="sizee">
-                                        <a href="#win @i.Id">
-                                            <h4 align="left">@user.FirstOrDefault(x => x.Id == i.UserId).Name</h4>
-                                            <p>@i.Body</p>
-                                            @if (i.Photo != null)
+                                    @if (i.UserId == idd)
+                                    {
+                                        <form class="alignright" asp-action="DeletePosts" asp-controller="home" asp-route-id="@i.Id">
+                                            <div class="form-group">
+                                                <label class="upload-file__label" for="upload-file__del_@i.Id">
+                                                    <i class="fas fa-times-circle"></i>
+                                                </label>
+                                                <input hidden id="upload-file__del_@i.Id" type="submit" value="Удалить" class="btn btn-default" />
+                                            </div>
+                                        </form>
+                                    }
+                                    <a href="#win_@i.Id">
+                                        <p class="alignleft">
+                                            @if (user.FirstOrDefault(x => x.Id == i.UserId) != null)
                                             {
-                                                <img style="border-radius: 15px;" title="" src="data:video/mp4;base64,@(Convert.ToBase64String(i.Photo))" alt="" />
-
+                                                <h4 align="left">@user.FirstOrDefault(x => x.Id == i.UserId).Name</h4>
                                             }
-                                        </a>
-                                    </div>
-                                    <!-- Модальное окно №5 -->
-                                    <a href="#x" class="overlay" id="win @i.Id"></a>
-                                    <div id="element" class="popup" style="border-color: rgba(128, 128, 255,0.3); overflow: scroll; height: 100%;">
-                                        <h4>@user.FirstOrDefault(x => x.Id == i.UserId).Name</h4>
-                                        <br />
+
+
+                                        </p>
+                                        <p>@i.Body</p>
                                         @if (i.Photo != null)
                                         {
-                                            <img class="is-image" src="data:video/mp4;base64,@(Convert.ToBase64String(i.Photo))" alt="" />
+                                            <img style="border-radius: 15px;" title="" src="data:image/gif;base64,@(Convert.ToBase64String(i.Photo))" alt="" />
+
+                                        }
+                                        @if (i.Video != null)
+                                        {
+                                            <video style="border-radius: 15px;" title="" src="data:video/mp4;base64,@(Convert.ToBase64String(i.Video))" alt="" />
+
+                                        }
+                                        @if (i.Music != null)
+                                        {
+                                            <audio controls src="data:audio/mpeg;base64,@(Convert.ToBase64String(i.Music))" alt="" />
+
+                                        }
+                                    </a>
+                                    <!-- Модальное окно №5 -->
+                                    <a href="#x" class="overlay" id="win_@i.Id"></a>
+                                    <div id="element" class="popup" style="background-color: rgb(217 217 255); overflow: scroll; height: 100%; ">
+                                        @if (user.FirstOrDefault(x => x.Id == i.UserId) != null)
+                                        {
+                                            <h4 style="color: rgb(108 108 255);">@user.FirstOrDefault(x => x.Id == i.UserId).Name</h4>
+                                        }
+                                        <br />
+                                        <p>@i.Body</p>
+                                        @if (i.Photo != null)
+                                        {
+                                            <img style="border-radius: 15px;" title="" src="data:image/gif;base64,@(Convert.ToBase64String(i.Photo))" alt="" />
+
+                                        }
+                                        @if (i.Video != null)
+                                        {
+                                            <video controls style="border-radius: 15px;" title="" src="data:video/mp4;base64,@(Convert.ToBase64String(i.Video))" alt=""></video>
+
+                                        }
+                                        @if (i.Music != null)
+                                        {
+                                            <audio controls style="border-radius: 15px;" src="data:audio/mpeg;base64,@(Convert.ToBase64String(i.Music))" title="" alt=""></audio>
+
                                         }<p>
                                             <div class="desk">
                                                 <ul id="menu">
@@ -146,34 +240,73 @@
 
                                         @foreach (var j in comment.Where(x => x.postId == i.Id))
                                         {
-                                            <div>
+                                            <div class="aimg">
                                                 <p align="left">@j.Name</p>
-                                                <p>@j.Body</p>
+                                                <p align="left">@j.Body</p>
+                                                @if (j.Photo != null)
+                                                {
+                                                    <img style="border-radius: 15px;" title="" src="data:image/gif;base64,@(Convert.ToBase64String(j.Photo))" alt="" />
+
+                                                }
+                                                @if (j.Video != null)
+                                                {
+                                                    <video style="border-radius: 15px;" title="" src="data:video/mp4;base64,@(Convert.ToBase64String(j.Video))" alt="" />
+
+                                                }
+                                                @if (j.Music != null)
+                                                {
+                                                    <audio controls src="data:audio/mpeg;base64,@(Convert.ToBase64String(j.Music))" alt="" />
+
+                                                }
                                             </div>
-                                            <a class="close" style="top: 0%;right: 0%;border-radius: 18px;" title="Закрыть" href="#close"></a>
                                         }
+                                        <a class="close" style="top: 0%;right: 0%;border-radius: 18px;" title="Закрыть" href="#close"></a>
+
                                         <div class="verticalLine"></div>
-                                        <form asp-action="UserId" asp-controller="home">
+                                        <form asp-action="UserId" asp-controller="home" asp-route-userId="@mid" enctype="multipart/form-data">
                                             <div hidden class="form-group">
                                                 <label asp-for="postId" class="control-label">Имя</label>
                                                 <input type="text" asp-for="postId" value="@i.Id" class="form-control" />
-                                            </div>
-                                            <div hidden class="form-group">
-                                                <label asp-for="Data" class="control-label">Имя</label>
-                                                <input type="text" asp-for="Data" value="@DateTime.Now" class="form-control" />
                                             </div>
                                             <div align="left" class="form-group">
                                                 <label asp-for="Body" class="control-label">Комментарий</label>
                                                 <input type="text" asp-for="Body" class="form-control" />
                                             </div>
-                                            @foreach (var j in user)
-                                            {
-                                                <div hidden align="left" class="form-group">
-                                                    <label asp-for="Name" class="control-label">Автор поста</label>
-                                                    <input type="text" asp-for="Name" value="@j.Name" class="form-control" />
-                                                </div>
-                                            }
-                                            <input hidden name="userId" value="@mid" />
+                                            <div align="left" class="form-group">
+
+                                                <label class="upload-file__label" for="upload-file__input_1_@i.Id">
+                                                    <i class="far fa-images"></i>
+                                                </label>
+                                                <input hidden
+                                                       name="photo"
+                                                       type="file"
+                                                       id="upload-file__input_1_@i.Id"
+                                                       class="form-control"
+                                                       accept=".jpg, .jpeg, .png"
+                                                       multiple>
+                                                <label class="upload-file__label" for="upload-file__input_2_@i.Id">
+                                                    <i class="fas fa-video"></i>
+                                                </label>
+                                                <input hidden
+                                                       name="video"
+                                                       asp-for="Video"
+                                                       type="file"
+                                                       id="upload-file__input_2_@i.Id"
+                                                       class="form-control"
+                                                       accept=".mp4"
+                                                       multiple>
+                                                <label class="upload-file__label" for="upload-file__input_3_@i.Id">
+                                                    <i class="fas fa-music"></i>
+                                                </label>
+                                                <input hidden
+                                                       name="music"
+                                                       asp-for="Music"
+                                                       type="file"
+                                                       id="upload-file__input_3_@i.Id"
+                                                       class="form-control"
+                                                       accept=".mp3"
+                                                       multiple>
+                                            </div>
                                             <div class="form-group">
                                                 <input type="submit" value="Отправить" class="btn btn-default" />
                                             </div>
@@ -196,64 +329,92 @@
                     {
                         <p align="left">@j.Name</p>
                         <p>@j.Body</p>
+                        @if (j.Photo != null)
+                        {
+                            <img style="border-radius: 15px;" title="" src="data:image/gif;base64,@(Convert.ToBase64String(j.Photo))" alt="" />
+
+                        }
                     }
 
                     @*@if (User.IsInRole("admin") || User.IsInRole("editor"))
-                        {
-                            <form asp-controller="Home" asp-action="DeletePosts" method="post" asp-route-id="@i.Id">
-                                <p align="center">
-                                    <input type="submit" class="btn btn-default" value="Удалить" />
-                                </p>
-                            </form>
-                        }*@
-                    @*@if (likes != null)
-                        {
-                            @foreach (var j in user.Where(x => x.Id == idd))
-                            {
-                                if (likes.Where(x => x.UserName == j.Name && x.postId == i.Id).Sum(x => x.Like) < 1)
-                                {
-                                    // > 1
-                                    @Html.ActionLink("addLikes", "addLikes", new { id = i.Id, name = j.Name,userId=mid })
-
-                                }
-                                else
-                                {
-                                    foreach (var k in likes.Where(x => x.postId == i.Id))
-                                    {
-                                        @Html.ActionLink("delLikes", "delLikes", new { id = k.Id, userId = mid })
-                                    }
-                                }
-
-                            }
-                        }*@
-                    @*<form asp-controller="Home" asp-action="DeleteComments" method="post" asp-route-uss="@mid" asp-route-id="@j.Id">
-                            <input hidden name="userId" value="@mid" />
+                    {
+                        <form asp-controller="Home" asp-action="DeletePosts" method="post" asp-route-id="@i.Id">
                             <p align="center">
                                 <input type="submit" class="btn btn-default" value="Удалить" />
                             </p>
-                        </form>*@
+                        </form>
+                    }*@
+                    @*@if (likes != null)
+                    {
+                        @foreach (var j in user.Where(x => x.Id == idd))
+                        {
+                            if (likes.Where(x => x.UserName == j.Name && x.postId == i.Id).Sum(x => x.Like) < 1)
+                            {
+                                // > 1
+                                @Html.ActionLink("addLikes", "addLikes", new { id = i.Id, name = j.Name,userId=mid })
+
+                            }
+                            else
+                            {
+                                foreach (var k in likes.Where(x => x.postId == i.Id))
+                                {
+                                    @Html.ActionLink("delLikes", "delLikes", new { id = k.Id, userId = mid })
+                                }
+                            }
+
+                        }
+                    }*@
+                    @*<form asp-controller="Home" asp-action="DeleteComments" method="post" asp-route-uss="@mid" asp-route-id="@j.Id">
+                        <input hidden name="userId" value="@mid" />
+                        <p align="center">
+                            <input type="submit" class="btn btn-default" value="Удалить" />
+                        </p>
+                    </form>*@
                     <div class="verticalLine"></div>
-                    <form asp-action="UserId" asp-controller="home">
+                    <form asp-action="UserId" asp-controller="home" enctype="multipart/form-data">
                         <div hidden class="form-group">
                             <label asp-for="postId" class="control-label">Имя</label>
                             <input type="text" asp-for="postId" value="@i.Id" class="form-control" />
-                        </div>
-                        <div hidden class="form-group">
-                            <label asp-for="Data" class="control-label">Имя</label>
-                            <input type="text" asp-for="Data" value="@DateTime.Now" class="form-control" />
                         </div>
                         <div align="left" class="form-group">
                             <label asp-for="Body" class="control-label">Комментарий</label>
                             <input type="text" asp-for="Body" class="form-control" />
                         </div>
-                        @foreach (var j in user)
-                        {
-                            <div hidden align="left" class="form-group">
-                                <label asp-for="Name" class="control-label">Автор поста</label>
-                                <input type="text" asp-for="Name" value="@j.Name" class="form-control" />
-                            </div>
-                        }
-                        <input hidden name="userId" value="@mid" />
+                        <div align="left" class="form-group">
+
+                            <label class="upload-file__label" for="upload-file__input_4_@i.Id">
+                                <i class="far fa-images"></i>
+                            </label>
+                            <input hidden
+                                   name="photo"
+                                   type="file"
+                                   id="upload-file__input_4_@i.Id"
+                                   class="form-control"
+                                   accept=".jpg, .jpeg, .png"
+                                   multiple>
+                            <label class="upload-file__label" for="upload-file__input_5_@i.Id">
+                                <i class="fas fa-video"></i>
+                            </label>
+                            <input hidden
+                                   name="video"
+                                   asp-for="Video"
+                                   type="file"
+                                   id="upload-file__input_5_@i.Id"
+                                   class="form-control"
+                                   accept=".mp4"
+                                   multiple>
+                            <label class="upload-file__label" for="upload-file__input_6_@i.Id">
+                                <i class="fas fa-music"></i>
+                            </label>
+                            <input hidden
+                                   name="music"
+                                   asp-for="Music"
+                                   type="file"
+                                   id="upload-file__input_6_@i.Id"
+                                   class="form-control"
+                                   accept=".mp3"
+                                   multiple>
+                        </div>
                         <div class="form-group">
                             <input type="submit" value="Отправить" class="btn btn-default" />
                         </div>
@@ -264,6 +425,5 @@
                 <br />
             }
         }
-    }
     </center>
-<link rel="stylesheet" href="~/css/photo.css"/>
+<link rel="stylesheet" href="~/css/photo.css" />

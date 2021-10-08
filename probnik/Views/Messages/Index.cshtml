@@ -10,7 +10,6 @@
     var photo = ViewBag.Photo as List<byte[]>;
     var idd = User.FindFirstValue(ClaimTypes.NameIdentifier);
     var groupChat = ViewBag.GroupChat as List<GroupChat>;
-    //long mes = message.Where(x => x.id == idd || x.Fromm == only).Select(y=>y.ChatId).Distinct();
 }
 <style>
     td a {
@@ -32,28 +31,56 @@
         height: 50px;
         border-radius: 35px;
     }
+
     table {
-        border-spacing: 0px;
-        border-collapse: collapse;
+        border-collapse: separate;
+        width: 100%;
+        border-spacing: 7px 11px;
     }
+
+    tr {
+        border: 1px solid #a52a2a; /* Граница вокруг ячеек */
+    }
+
     @@media (max-width:490px) {
         img {
             width: 30px;
             height: 30px;
         }
     }
-</style>
-<a asp-action="AddGroupChat" asp-controller="Messages">Групповой чат</a>
 
-<div id="timee">
-    <table class="table">
+    .first_div {
+        background: rgba(128, 128, 255,0%);
+    }
+
+    .second_div {
+        background: rgba(128, 128, 255,0%);
+    }
+    button {
+        width:100%;
+        background: #d9d9ff;
+        border-radius: 13px;
+        border-color: #a8bdff;
+        height:50%;
+    }
+</style>
+<a asp-action="AddGroupChat" asp-controller="Messages">Создать беседу</a>
+<div  class="rightbokmenu">
+    <button class="btn2">Сообщения</button>
+    <br />
+    <button class="btn1">Групповые чаты</button>
+</div>
+<div class="second_div">
+    <table>
+        <p align="center">Групповые чаты</p>
         @if (Model.AddGroupChats != null)
         {
             @foreach (var j in addGroupChat)
             {
                 @foreach (var i in Model.AddGroupChats.Where(x => x.GroupId == j.GroupId && x.Name != null))
                 {
-                    <tr style="border: 3px solid #d3fcff;border-radius:10px">
+
+                    <tr>
                         <td>
                             <a asp-action="GroupMessage" asp-controller="Messages" asp-route-groupId="@i.GroupId" asp-route-Name="@i.Name">
                                 @if (i.Photo != null)
@@ -62,14 +89,14 @@
                                 }
                                 else
                                 {
-                                    <img  src="https://tib.tomsk.ru/upload/iblock/9bb/9bba32393645786f73bbc55c98aa138e.jpg" />
+                                    <img src="https://tib.tomsk.ru/upload/iblock/9bb/9bba32393645786f73bbc55c98aa138e.jpg" />
 
                                 }
 
                             </a>
 
                         </td>
-                        <td height="100%">
+                        <td width="100%" >
                             <a asp-action="GroupMessage" asp-controller="Messages" asp-route-groupId="@i.GroupId" asp-route-Name="@i.Name">
                                 @i.Name
                                 <br />
@@ -96,12 +123,17 @@
                 }
             }
         }
+    </table>
+</div>
+<div class="first_div">
+    <table>
+
         <p align="center">Сообщения</p>
         @foreach (var i in Model.User)
         {
             foreach (var j in message.Where(x => x.id == idd && x.Fromm == i.Email || x.id == i.Id && x.Fromm == only).Take(1))
             {
-                <tr style="border: 3px solid #d3fcff; width: 100%;">
+                <tr style="">
                     <td>
 
                         <a asp-action="UserId" asp-controller="Home" asp-route-id="@i.Id">
@@ -111,7 +143,7 @@
                             }
                             else
                             {
-                                <img  src="https://tib.tomsk.ru/upload/iblock/9bb/9bba32393645786f73bbc55c98aa138e.jpg" />
+                                <img src="https://tib.tomsk.ru/upload/iblock/9bb/9bba32393645786f73bbc55c98aa138e.jpg" />
 
                             }
                         </a>
@@ -130,20 +162,32 @@
                     </td>
 
                 </tr>
-                }
             }
+        }
     </table>
 </div>
-<script src="~/lib/jquery/dist/jquery.js"></script>
-<script src="~/lib/jquery-unobtrusive-ajax/jquery.unobtrusive-ajax.min.js"></script>
-@section Scripts
+        </div>
+        <script src="~/lib/jquery/dist/jquery.js"></script>
+        <script src="~/lib/jquery-unobtrusive-ajax/jquery.unobtrusive-ajax.min.js"></script>
+        @section Scripts
 {
-    <script>
-      setTimeout(function () {
-          window.location.reload(1);
-      }, 8500);
-        function isChecked(id) {
-            return checkedStudents.find((item) => item === id);
+            <script>
+                $(document).ready(function () {
+                    $(".second_div").hide();
+                    $(".btn1").click(function () {
+                        $(".first_div").hide();
+                        $(".second_div").show()
+                    });
+                    $(".btn2").click(function () {
+                        $(".second_div").hide();
+                        $(".first_div").show()
+                    });
+                });
+                //setTimeout(function () {
+                //    window.location.reload(1);
+                //}, 8500);
+                function isChecked(id) {
+                    return checkedStudents.find((item) => item === id);
+                }
+            </script>
         }
-    </script>
-}

@@ -35,13 +35,13 @@ namespace probnik.Controllers
     public class MessagesController : Controller
     {
 
-        private readonly IHubContext<ChatHub> hC;
+        private readonly IHubContext<ChatsHub> hC;
         private ApplicationContext db;
         private readonly ILogger<MessagesController> _logger;
         UserManager<User> _userManager;
         RoleManager<IdentityRole> _roleManager;
 
-        public MessagesController(ILogger<MessagesController> logger, ApplicationContext context, UserManager<User> userManager, RoleManager<IdentityRole> roleManager, IHubContext<ChatHub> hubContext)
+        public MessagesController(ILogger<MessagesController> logger, ApplicationContext context, UserManager<User> userManager, RoleManager<IdentityRole> roleManager, IHubContext<ChatsHub> hubContext)
         {
             hC = hubContext;
             _logger = logger;
@@ -63,7 +63,6 @@ namespace probnik.Controllers
                 AddGroupChats = list,
                 User = user
             };
-
             ViewBag.Messages = db.Messages.ToList();
             //ViewBag.Users = db.Users.ToList();
             ViewBag.Photo = db.Messages.Select(x => x.Photo).ToList();
@@ -188,7 +187,7 @@ namespace probnik.Controllers
             }
             return NotFound();
         }
-        public async Task<ActionResult> editRole(long id,string mute= "Mute")
+        public async Task<ActionResult> editRole(long id,string mute="Mute")
         {
             AddGroupChat groupChat = db.AddGroupChat.FirstOrDefault(x => x.Id == id);
             groupChat.Role = mute;

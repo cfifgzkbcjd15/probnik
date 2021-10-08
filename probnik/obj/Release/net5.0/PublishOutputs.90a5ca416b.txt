@@ -3,7 +3,7 @@ D:\Desktop\моя прелесть\probnik\obj\Release\net5.0\PubTmp\Out\wwwroot
 D:\Desktop\моя прелесть\probnik\obj\Release\net5.0\PubTmp\Out\wwwroot\css\site.css
 D:\Desktop\моя прелесть\probnik\obj\Release\net5.0\PubTmp\Out\wwwroot\favicon.ico
 D:\Desktop\моя прелесть\probnik\obj\Release\net5.0\PubTmp\Out\wwwroot\index.html
-D:\Desktop\моя прелесть\probnik\obj\Release\net5.0\PubTmp\Out\wwwroot\js\chat.js
+D:\Desktop\моя прелесть\probnik\obj\Release\net5.0\PubTmp\Out\wwwroot\js\chats.js
 D:\Desktop\моя прелесть\probnik\obj\Release\net5.0\PubTmp\Out\wwwroot\js\signalr\dist\browser\signalr.js
 D:\Desktop\моя прелесть\probnik\obj\Release\net5.0\PubTmp\Out\wwwroot\js\signalr\dist\browser\signalr.min.js
 D:\Desktop\моя прелесть\probnik\obj\Release\net5.0\PubTmp\Out\wwwroot\js\site.js

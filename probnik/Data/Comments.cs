@@ -12,7 +12,7 @@ namespace probnik.Data
     {
         [Key]
         [Column("id")]
-        public int Id { get; set; } // имя пользователя
+        public int Id { get; set; }
         [Column("name")]
         public string Name { get; set; }
         [Column("body")]

@@ -5,21 +5,22 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] - probnik</title>
+    <title> @ViewData["Title"]</title>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="icon" href="https://sun9-77.userapi.com/impg/c857324/v857324279/1bc14c/_A2KCrKSmDA.jpg?size=604x587&quality=96&sign=d8cb68d743882097e8690e26c8da85fb&type=album" />
     <script src="https://kit.fontawesome.com/9a4928363c.js" crossorigin="anonymous"></script>
-
 </head>
 <style>
     a {
         color: rgb(108 108 255);
     }
+
     input[type='file'] {
         color: transparent;
     }
+
     .container a {
         text-decoration: none;
     }
@@ -41,29 +42,44 @@
         border-radius: 50%;
         overflow: hidden;
     }
+    .rightbokmenu {
+        position: fixed;
+        height: 70px;
+        width: 10%;
+        background-color: rgba(128, 128, 255,0.3);
+        right: 15%;
+        top: 73px;
+        border-radius: 10px;
+        font-size:13px;
+    }
 
-        .header__logo img {
-            max-width: 100%;
-            display: block;
-        }
+    .header__logo img {
+        max-width: 100%;
+        display: block;
+    }
 
     .bokmenu {
-        height: 22.5%;
-        width: 12%;
+        height: 200px;
+        width: 130px;
         position: absolute;
         display: flex;
         max-width: 25%;
         min-width: 10px;
-        left: 7%;
+        left: 13%;
         /*top: 11%;*/
         background-color: rgba(128, 128, 255,0.3);
         border-radius: 10px;
-        max-height:160px;
+        max-height: 160px;
     }
 
     body {
         font-size: 15px;
     }
+
+    .container {
+        width: 41%;
+    }
+
     input[type=submit] {
         border-radius: 10px;
         border-color: rgba(128, 128, 255,0.3);
@@ -73,56 +89,74 @@
         flex-flow: row wrap;
     }
 
-    @@media (max-width:600px) {
-        body {
-            font-size: 8px;
-        }
-    }
+    @@media (max-width:1040px) {
 
-    @@media (max-width:850px) {
-        .bokmenu {
-            width: 13%;
-        }
-    }
-
-    @@media (max-width:850px) {
         .bokmenu {
             width: 14%;
             font-size: 10px;
         }
     }
 
+    @@media (max-width:900px) {
+        .rightbokmenu {
+            font-size:8px;
+        }
+    }
+
     @@media (max-width:600px) {
         .bokmenu {
             font-size: 8px;
+        }
+        .rightbokmenu{
+        height:60px;
         }
         input[type=submit] {
             width: 40px;
             height: 20px;
             font-size: 7px;
         }
+
+        .container {
+            font-size: 8px;
+        }
     }
 
     @@media (max-width:490px) {
-        .bokmenu {
+        .container {
+            width: 51%;
+        }
+        .rightbokmenu {
+            right:10%;
+            width:13%;
+            height:50px;
+            font-size:6px;
+        }
+            .bokmenu {
             left: 15px;
             width: 18%;
         }
-        h2{
-            font-size:15px;
+
+        h2 {
+            font-size: 15px;
         }
+
         input[type=submit] {
             width: 30px;
             height: 15px;
             font-size: 5px;
         }
     }
+    @@media (max-width:420px) {
+        .rightbokmenu {
+            width:15%;
+            right:8%;
+        }
     }
 </style>
 <body style=" background: white;">
     <header>
         <nav style="border-bottom: 1px solid #b8cadc00 !important;background-color: rgba(128, 128, 255,0.3); width: 100%; " class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light border-bottom  mb-3">
-            <div class="container">
+            <div class="container" style="width:100%;">
                 <a class="navbar-brand" style="color: rgb(108 108 255);" asp-area="" asp-controller="Home" asp-action="Index">Главная</a>
 
                 @if (User.Identity.IsAuthenticated)
@@ -184,12 +218,11 @@
         </div>
     }
 
-    <div class="container" style="width: 41%; border-radius: 10px; height: 100%; min-height: 525px; background-color: rgba(128, 128, 255,0.3); ">
+    <div class="container" style=" border-radius: 10px; height: 100%; min-height: 525px; background-color: rgba(128, 128, 255,0.3); ">
         <main role="main" class="pb-3">
             @RenderBody()
         </main>
     </div>
-    <script src="~/js/site.js" asp-append-version="true"></script>
     <environment exclude="Development">
         <script src="https://ajax.aspnetcdn.com/ajax/jquery/jquery-3.3.1.min.js"
                 asp-fallback-src="~/lib/jquery/dist/jquery.min.js"

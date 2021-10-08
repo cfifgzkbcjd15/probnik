@@ -184,7 +184,7 @@
 
 .product-wrapper {
     display: block;
-    width: 90%;
+    width: 100%;
     float: left;
     transition: width .2s;
 }
@@ -209,7 +209,7 @@ ul.hr {
 
     ul.hr li {
         display: inline; /* Отображать как строчный элемент */
-        margin-right: 5px; /* Отступ слева */
+        margin-right: 5px;  Отступ слева */
         border: 0px solid #000; /* Рамка вокруг текста */
         padding: 3px; /* Поля вокруг текста */
     }
